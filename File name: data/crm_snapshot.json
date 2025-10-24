@@ -1,0 +1,15 @@
+{
+  "tickets_abiertos": 17,
+  "sla_breached": 1,
+  "nps": 9.1,
+  "csat": 4.5,
+  "incidentes": [
+    {"id":"INC-2025-010","sev":"SEV3","estado":"CLOSED","titulo":"DB failover health-check"},
+    {"id":"INC-2025-011","sev":"SEV2","estado":"MITIGATED","titulo":"Rate limiting burst control"}
+  ],
+  "accounts": [
+    {"nombre":"Banco Nacional","impacto":"HIGH"},
+    {"nombre":"TechCorp Solutions","impacto":"MED"},
+    {"nombre":"Global Retail Inc","impacto":"LOW"}
+  ]
+}
