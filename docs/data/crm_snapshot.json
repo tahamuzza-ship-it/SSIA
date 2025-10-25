@@ -1,0 +1,49 @@
+{
+  "tickets_abiertos": 17,
+  "sla_breached": 1,
+  "nps": 9.1,
+  "csat": 4.5,
+  "screenshots": {
+    "desktop": "assets/screenshot-desktop.png",
+    "mobile": "assets/screenshot-mobile.png", 
+    "detail": "assets/screenshot-detail.png"
+  },
+  "incidentes": [
+    {
+      "id": "INC-2025-010",
+      "sev": "SEV3",
+      "estado": "CLOSED",
+      "titulo": "DB failover health-check",
+      "image": "assets/screenshot-detail.png"
+    },
+    {
+      "id": "INC-2025-011", 
+      "sev": "SEV2",
+      "estado": "MITIGATED",
+      "titulo": "Rate limiting burst control",
+      "image": "assets/screenshot-desktop.png"
+    }
+  ],
+  "accounts": [
+    {
+      "nombre": "Banco Nacional",
+      "impacto": "HIGH",
+      "image": "assets/screenshot-desktop.png"
+    },
+    {
+      "nombre": "TechCorp Solutions",
+      "impacto": "MED", 
+      "image": "assets/screenshot-mobile.png"
+    },
+    {
+      "nombre": "Global Retail Inc",
+      "impacto": "LOW",
+      "image": "assets/screenshot-detail.png"
+    }
+  ],
+  "metadata": {
+    "generated": "2025-10-25T08:15:00Z",
+    "version": "1.0",
+    "dashboard_url": "https://codepen.io/tahamuzza/pen/XJXqYeN"
+  }
+}
