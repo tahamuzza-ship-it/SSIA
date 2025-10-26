@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HYDRA War-Room - Presentación</title>
+  <style>
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b1220;color:#e6e8ef;margin:0}
+    header{padding:28px 20px;text-align:center;border-bottom:1px solid #1e2638}
+    h1{font-size:40px;margin:0 0 6px}
+    h2{font-size:18px;color:#8ab4ff;margin:0}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:16px}
+    .card{background:#121a2b;border:1px solid #1e2638;border-radius:12px;padding:16px}
+    .card h3{color:#8ab4ff;margin:0 0 10px}
+    .nav{position:sticky;top:0;background:#0b1220;padding:10px;border-bottom:1px solid #1e2638;display:flex;gap:8px;justify-content:center}
+    .btn{background:#1a2340;border:1px solid #1e2638;color:#e6e8ef;padding:10px 14px;border-radius:8px;text-decoration:none;cursor:pointer}
+    .btn:hover{background:#2a3450}
+    .frame{width:100%;height:560px;border:2px solid #1e2638;border-radius:12px;overflow:hidden}
+    .muted{opacity:.8}
+    footer{padding:20px;text-align:center;border-top:1px solid #1e2638;opacity:.8}
+    section{display:none}
+    section.active{display:block}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🛡️ HYDRA War-Room</h1>
+    <h2>Dashboard de Monitoreo y CRM</h2>
+  </header>
+
+  <div class="nav">
+    <button class="btn" data-go="home">Inicio</button>
+    <button class="btn" data-go="features">Características</button>
+    <button class="btn" data-go="demo">Demo en vivo</button>
+    <button class="btn" data-go="crm">Vista CRM</button>
+  </div>
+
+  <main class="container">
+    <section id="home" class="active">
+      <p class="muted">Versión de una sola página para GitHub Pages (sin rutas rotas ni archivos externos).</p>
+      <div class="cards">
+        <div class="card">
+          <h3>💡 Qué es</h3>
+          <p>Un War-Room de monitoreo con paneles, alertas y CRM en un solo lugar.</p>
+        </div>
+        <div class="card">
+          <h3>⚙️ Tecnología</h3>
+          <p>HTML + CSS + JS puro, sin dependencias externas. Fácil de hospedar en GitHub Pages.</p>
+        </div>
+        <div class="card">
+          <h3>🚀 Próximos pasos</h3>
+          <p>Conectar datos reales y gráficos. Esto es una demo visual y navegable.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="cards">
+        <div class="card"><h3>📊 Monitoreo</h3><p>KPIs, métricas de sistema y alertas automáticas.</p></div>
+        <div class="card"><h3>👥 CRM</h3><p>Tickets, SLA, NPS y satisfacción del cliente.</p></div>
+        <div class="card"><h3>📱 Responsive</h3><p>Optimizado para desktop, tablet y móvil.</p></div>
+        <div class="card"><h3>🔄 Actualizaciones</h3><p>Datos sincronizados cada 5 minutos (cuando se integre backend).</p></div>
+      </div>
+    </section>
+
+    <section id="demo">
+      <p class="muted">Demo interactiva (CodePen):</p>
+      <iframe class="frame" src="https://codepen.io/tahamuzza/pen/XJXqYeN?default-tab=result" title="HYDRA Demo" allowfullscreen></iframe>
+      <p style="margin-top:10px">
+        <a class="btn" href="https://codepen.io/tahamuzza/pen/XJXqYeN" target="_blank">🔗 Abrir CodePen</a>
+      </p>
+    </section>
+
+    <section id="crm">
+      <div class="cards">
+        <div class="card">
+          <h3>📈 Métricas actuales</h3>
+          <ul>
+            <li>Tickets abiertos: <strong>17</strong></li>
+            <li>SLA breached: <strong>1</strong></li>
+            <li>NPS: <strong>9.1</strong></li>
+            <li>CSAT: <strong>4.5/5</strong></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🧭 Navegación</h3>
+          <p>Usa los botones de arriba o las flechas del teclado ⬅️ ➡️</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>HYDRA War-Room • Demo estática para GitHub Pages</footer>
+
+  <script>
+    const sections = ["home","features","demo","crm"];
+    const show = id => sections.forEach(s=>{
+      document.getElementById(s).classList.toggle("active", s===id);
+    });
+    document.querySelectorAll("[data-go]").forEach(btn=>{
+      btn.addEventListener("click",()=>show(btn.dataset.go));
+    });
+    let idx = 0;
+    document.addEventListener("keydown", e=>{
+      if(e.key==="ArrowRight"){ idx=(idx+1)%sections.length; show(sections[idx]); }
+      if(e.key==="ArrowLeft"){ idx=(idx-1+sections.length)%sections.length; show(sections[idx]); }
+    });
+  </script>
+</body>
+</html>
