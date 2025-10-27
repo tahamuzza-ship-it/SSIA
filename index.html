@@ -1,94 +1,146 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tahamuzza Hydra Hub</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}.animate-pulse{animation:pulse 2s infinite}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahamuzza Hydra Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .animate-pulse {
+      animation: pulse 2s infinite;
+    }
+  </style>
 </head>
 <body class="bg-black text-white min-h-screen">
-<header class="relative w-full h-96 overflow-hidden bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-<div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black"></div>
-<div class="absolute inset-0 flex flex-col items-center justify-center px-4">
-<h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-blue-600 bg-clip-text text-transparent animate-pulse mb-4 text-center">TAHAMUZZA</h1>
-<h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-600 bg-clip-text text-transparent text-center">HYDRA HUB</h2>
-</div>
-</header>
-<main class="container mx-auto px-4 py-16">
-<div class="text-center mb-16">
-<img src="/inteligenciav017z.jpg" alt="Inteligencia" class="w-full max-w-2xl mx-auto rounded-lg shadow-2xl shadow-purple-500/50 mb-8">
-<div class="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-purple-500 shadow-2xl shadow-purple-500/50 bg-gradient-to-br from-blue-900 to-purple-900"></div>
-<h2 class="text-4xl font-bold mt-8 mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Conexión y Crecimiento</h2>
-<p class="text-xl text-gray-300 max-w-2xl mx-auto">Explora las infinitas posibilidades de la inteligencia artificial y la tecnología avanzada</p>
-</div>
-<div class="text-center mb-16">
-<img src="/arboldelavida.jpg" alt="Árbol de la Vida" class="w-full max-w-2xl mx-auto rounded-lg shadow-2xl shadow-blue-500/50 mb-8">
-</div>
-<div class="max-w-4xl mx-auto mb-16 px-4">
-<div class="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700 shadow-2xl">
-<h3 class="text-2xl font-bold text-center mb-8 bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">Formulario de Contacto</h3>
-<div class="w-full h-96 rounded-lg overflow-hidden border border-gray-600">
-<iframe src="https://tally.so/r/wbbjW1" width="100%" height="100%" frameborder="0" title="Formulario"></iframe>
-</div>
-</div>
-</div>
-<div class="text-center mb-16">
-<img src="/senseytao2.jpg" alt="Sensey Tao" class="w-full max-w-2xl mx-auto rounded-lg shadow-2xl shadow-cyan-500/50 mb-8">
-</div>
-<div class="flex flex-col gap-4 sm:gap-6 justify-center items-center mb-16 px-4">
-<button onclick="handleSend( )" class="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transition-all">Enviar</button>
-<button onclick="window.open('https://t.me/Aistentedeformularios_bot','_blank' )" class="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transition-all">Comunicarse con el Cibercomando</button>
-<div class="w-full max-w-md p-3 bg-gray-900/80 border border-gray-700 rounded-lg"><div class="flex items-center gap-2"><div id="icon" class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div><span id="msg" class="text-gray-300 text-sm">Esperando...</span></div></div>
-</div>
-<div class="text-center mb-16">
-<div class="w-80 h-64 mx-auto rounded-2xl border-4 border-blue-500 shadow-2xl shadow-blue-500/50 bg-gradient-to-br from-cyan-900 to-blue-900"></div>
-<h2 class="text-3xl font-bold mt-8 mb-4 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Sabiduría Digital</h2>
-<p class="text-lg text-gray-300 max-w-xl mx-auto">La convergencia entre la sabiduría ancestral y la tecnología del futuro</p>
-</div>
-</main>
-<footer class="bg-gray-900/80 backdrop-blur-sm border-t border-purple-500/30 py-12">
-<div class="container mx-auto px-4">
-<h3 class="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">TAHAMUZZA</h3>
-<div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
-<div class="bg-gray-800/50 rounded-lg p-4 border border-blue-500/30">
-<h4 class="text-lg font-semibold text-blue-400 mb-2">📧 Correos Electrónicos</h4>
-<p class="text-gray-300">Roberto@tahamuzza.online</p>
-<p class="text-gray-300">tahamuzza@gmail.com</p>
-</div>
-<div class="bg-gray-800/50 rounded-lg p-4 border border-purple-500/30">
-<h4 class="text-lg font-semibold text-purple-400 mb-2">📱 Teléfonos</h4>
-<p class="text-gray-300">+57 321 446 10 36</p>
-<p class="text-gray-300">+57 300 571 95 53</p>
-</div>
-<div class="bg-gray-800/50 rounded-lg p-4 border border-green-500/30 flex items-center justify-center">
-<button onclick="window.open('https://tahamuzza-ship-it.github.io/SSIA/','_blank' )" aria-label="Ir al Dashboard" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 text-lg font-semibold rounded-xl shadow-lg shadow-green-500/30 transition-all hover:scale-105">Dashboard</button>
-</div>
-</div>
-<div class="text-center border-t border-gray-700 pt-6">
-<p class="text-gray-400">© 2024 Tahamuzza - Hydra Hub - Tecnología Avanzada e Inteligencia Artificial</p>
-</div>
-</div>
-</footer>
-<script>
-function handleSend(){
-const icon=document.getElementById('icon');
-const msg=document.getElementById('msg');
-icon.className='w-2 h-2 bg-orange-400 rounded-full';
-msg.textContent='Procesando… espera confirmación (hasta 5 min)';
-setTimeout(()=>{
-icon.className='w-2 h-2 bg-blue-400 rounded-full';
-msg.textContent='Mensaje recibido. Confirmación en breve…';
-setTimeout(()=>{
-const ok=Math.random()>0.5;
-icon.className='w-2 h-2 '+(ok?'bg-green-400':'bg-red-400')+' rounded-full';
-msg.textContent=ok?'OK — Tarea procesada correctamente':'ERROR — Fallo en el procesamiento';
-},3000);
-},2000);
-}
-window.addEventListener('message',e=>{
-if(e.data&&e.data.type==='tally-form-submit')handleSend();
-});
-</script>
+  <!-- ENCABEZADO -->
+  <header class="relative w-full h-96 overflow-hidden bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black"></div>
+    <div class="absolute inset-0 flex flex-col items-center justify-center px-4">
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-blue-600 bg-clip-text text-transparent animate-pulse mb-4 text-center">TAHAMUZZA</h1>
+      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-400 via-blue-500 to-purple-600 bg-clip-text text-transparent text-center">HYDRA HUB</h2>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="container mx-auto px-4 py-16">
+    <!-- SECCIÓN 1: IMAGEN INTELIGENCIA + CÍRCULO + TEXTO -->
+    <div class="text-center mb-16">
+      <img src="/inteligenciav017z.jpg" alt="Inteligencia" class="w-full max-w-2xl mx-auto rounded-lg shadow-2xl shadow-purple-500/50 mb-8">
+      <div class="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-purple-500 shadow-2xl shadow-purple-500/50 bg-gradient-to-br from-blue-900 to-purple-900"></div>
+      <h2 class="text-4xl font-bold mt-8 mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Conexión y Crecimiento</h2>
+      <p class="text-xl text-gray-300 max-w-2xl mx-auto">Explora las infinitas posibilidades de la inteligencia artificial y la tecnología avanzada</p>
+    </div>
+
+    <!-- SECCIÓN 2: IMAGEN ÁRBOL DE LA VIDA -->
+    <div class="text-center mb-16">
+      <img src="/arboldelavida.jpg" alt="Árbol de la Vida" class="w-full max-w-2xl mx-auto rounded-lg shadow-2xl shadow-blue-500/50 mb-8">
+    </div>
+
+    <!-- SECCIÓN 3: FORMULARIO DE CONTACTO -->
+    <div class="max-w-4xl mx-auto mb-16 px-4">
+      <div class="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700 shadow-2xl">
+        <h3 class="text-2xl font-bold text-center mb-8 bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">Formulario de Contacto</h3>
+        <div class="w-full h-96 rounded-lg overflow-hidden border border-gray-600">
+          <iframe src="https://tally.so/r/wbbjW1" width="100%" height="100%" frameborder="0" title="Formulario"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 4: IMAGEN SENSEY TAO -->
+    <div class="text-center mb-16">
+      <img src="/senseytao2.jpg" alt="Sensey Tao" class="w-full max-w-2xl mx-auto rounded-lg shadow-2xl shadow-cyan-500/50 mb-8">
+    </div>
+
+    <!-- SECCIÓN 5: BOTONES DE ACCIÓN -->
+    <div class="flex flex-col gap-4 sm:gap-6 justify-center items-center mb-16 px-4">
+      <button onclick="handleSend( )" class="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transition-all">
+        Enviar
+      </button>
+      <button onclick="window.open('https://t.me/Aistentedeformularios_bot','_blank' )" class="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transition-all">
+        Comunicarse con el Cibercomando
+      </button>
+      <div class="w-full max-w-md p-3 bg-gray-900/80 border border-gray-700 rounded-lg">
+        <div class="flex items-center gap-2">
+          <div id="icon" class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+          <span id="msg" class="text-gray-300 text-sm">Esperando...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 6: SABIDURÍA DIGITAL -->
+    <div class="text-center mb-16">
+      <div class="w-80 h-64 mx-auto rounded-2xl border-4 border-blue-500 shadow-2xl shadow-blue-500/50 bg-gradient-to-br from-cyan-900 to-blue-900"></div>
+      <h2 class="text-3xl font-bold mt-8 mb-4 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Sabiduría Digital</h2>
+      <p class="text-lg text-gray-300 max-w-xl mx-auto">La convergencia entre la sabiduría ancestral y la tecnología del futuro</p>
+    </div>
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="bg-gray-900/80 backdrop-blur-sm border-t border-purple-500/30 py-12">
+    <div class="container mx-auto px-4">
+      <h3 class="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">TAHAMUZZA</h3>
+      
+      <!-- INFORMACIÓN DE CONTACTO -->
+      <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
+        <!-- CORREOS -->
+        <div class="bg-gray-800/50 rounded-lg p-4 border border-blue-500/30">
+          <h4 class="text-lg font-semibold text-blue-400 mb-2">📧 Correos Electrónicos</h4>
+          <p class="text-gray-300">Roberto@tahamuzza.online</p>
+          <p class="text-gray-300">tahamuzza@gmail.com</p>
+        </div>
+
+        <!-- TELÉFONOS -->
+        <div class="bg-gray-800/50 rounded-lg p-4 border border-purple-500/30">
+          <h4 class="text-lg font-semibold text-purple-400 mb-2">📱 Teléfonos</h4>
+          <p class="text-gray-300">+57 321 446 10 36</p>
+          <p class="text-gray-300">+57 300 571 95 53</p>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div class="bg-gray-800/50 rounded-lg p-4 border border-green-500/30 flex items-center justify-center">
+          <button onclick="window.open('https://codepen.io/tahamuzza/pen/XJXqYeN','_blank' )" aria-label="Ir al Dashboard" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 text-lg font-semibold rounded-xl shadow-lg shadow-green-500/30 transition-all hover:scale-105">
+            Dashboard
+          </button>
+        </div>
+      </div>
+
+      <!-- COPYRIGHT -->
+      <div class="text-center border-t border-gray-700 pt-6">
+        <p class="text-gray-400">© 2024 Tahamuzza - Hydra Hub - Tecnología Avanzada e Inteligencia Artificial</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    function handleSend() {
+      const icon = document.getElementById('icon');
+      const msg = document.getElementById('msg');
+      
+      icon.className = 'w-2 h-2 bg-orange-400 rounded-full';
+      msg.textContent = 'Procesando… espera confirmación (hasta 5 min)';
+      
+      setTimeout(() => {
+        icon.className = 'w-2 h-2 bg-blue-400 rounded-full';
+        msg.textContent = 'Mensaje recibido. Confirmación en breve…';
+        
+        setTimeout(() => {
+          const ok = Math.random() > 0.5;
+          icon.className = 'w-2 h-2 ' + (ok ? 'bg-green-400' : 'bg-red-400') + ' rounded-full';
+          msg.textContent = ok ? 'OK — Tarea procesada correctamente' : 'ERROR — Fallo en el procesamiento';
+        }, 3000);
+      }, 2000);
+    }
+
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'tally-form-submit') {
+        handleSend();
+      }
+    });
+  </script>
 </body>
 </html>
