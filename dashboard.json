@@ -1,0 +1,31 @@
+[
+  {
+    "status": "success",
+    "message": "Operación completada exitosamente.",
+    "data": {
+      "agent_id": "agent_123",
+      "task_id": "task_abc",
+      "result": "Informe generado y memoria actualizada.",
+      "records": 128,
+      "latency_ms": 420
+    }
+  },
+  {
+    "status": "error",
+    "message": "Error interno del servidor.",
+    "details": {
+      "code": 500,
+      "trace": "Stack trace goes here...",
+      "service": "api-metrics",
+      "endpoint": "/v1/report"
+    }
+  },
+  {
+    "status": "pending",
+    "message": "La solicitud está en proceso, el tiempo excedió el umbral.",
+    "details": {
+      "timeout_threshold_ms": 30000,
+      "expected_completion_time": "N/D"
+    }
+  }
+]
