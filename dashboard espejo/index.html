@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>HYDRA — Dashboard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+body{font-family:system-ui,Segoe UI,Roboto,Arial;padding:14px;background:#f7f7fb}
+h2{margin:0 0 10px 0}
+.controls{margin-bottom:10px}
+input,select,button{padding:6px;margin-right:8px}
+table{border-collapse:collapse;width:100%;margin-top:12px;background:#fff}
+th,td{border:1px solid #eaeaea;padding:8px;text-align:left}
+th{background:#f1f1f3}
+a{color:#0645ad}
+.small{color:#666;font-size:13px}
+</style>
+</head>
+<body>
+<h2>HYDRA — Enlaces (buscador)</h2>
+<div class="controls">
+  <input id="q" placeholder="Buscar por título..." />
+  <select id="filtroFase"><option value="">Todas las fases</option></select>
+  <select id="filtroFuente"><option value="">Todas las fuentes</option></select>
+  <button id="btn">Buscar</button>
+  <span id="status" class="small" style="margin-left:12px"></span>
+</div>
+<div id="tableWrap"></div>
+
+<script>
+/* === URL del CSV limpio (tu raw ya puesta) === */
+const RAW_CSV_URL = 'https://raw.githubusercontent.com/tahamuzza-ship-it/SSIA/refs/heads/main/Enlaces_Fases_1_24%20clean%20(1).csv';
+
+const qEl = document.getElementById('q'),
+      fFase = document.getElementById('filtroFase'),
+      fFuente = document.getElementById('filtroFuente'),
+      btn = document.getElementById('btn'),
+      status = document.getElementById('status'),
+      tableWrap = document.getElementById('tableWrap');
+
+async function fetchCsv(url){
+  status.textContent = 'Cargando...';
+  const res = await fetch(url + '?t=' + Date.now(), { cache: 'no-store' });
+  if(!res.ok) { throw new Error('CSV no accesible ('+res.status+')'); }
+  const txt = await res.text();
+  const parsed = Papa.parse(txt, { header:true, skipEmptyLines:true });
+  if(parsed.errors && parsed.errors.length) console.warn('Errores parseo CSV', parsed.errors);
+  return parsed.data;
+}
+
+function populateFilters(rows){
+  // fases numéricas ordenadas
+  const fases = [...new Set(rows.map(r=>r.Fase).filter(Boolean))].sort((a,b)=>{
+    const na = isNaN(Number(a))?a:Number(a), nb = isNaN(Number(b))?b:Number(b);
+    if(typeof na==='number' && typeof nb==='number') return na-nb;
+    return String(na).localeCompare(String(nb));
+  });
+  fases.forEach(f => { const o=document.createElement('option'); o.value=f; o.textContent=f; fFase.appendChild(o); });
+  const fuentes = [...new Set(rows.map(r=>r.Fuente).filter(Boolean))].sort();
+  fuentes.forEach(f => { const o=document.createElement('option'); o.value=f; o.textContent=f; fFuente.appendChild(o); });
+}
+
+function render(rows){
+  tableWrap.innerHTML='';
+  if(!rows || rows.length===0){ tableWrap.textContent='No hay filas.'; return; }
+  const cols = Object.keys(rows[0]);
+  const table = document.createElement('table');
+  const thead = document.createElement('thead'), thr = document.createElement('tr');
+  cols.forEach(c => { const th = document.createElement('th'); th.textContent = c; thr.appendChild(th); });
+  thead.appendChild(thr); table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    cols.forEach(c=>{
+      const td = document.createElement('td');
+      const val = r[c] ?? '';
+      if(typeof val === 'string' && (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('www.'))){
+        const a = document.createElement('a');
+        a.href = val.startsWith('http') ? val : 'https://' + val;
+        a.textContent = val;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        td.appendChild(a);
+      } else {
+        td.textContent = val;
+      }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  tableWrap.appendChild(table);
+}
+
+async function load(){
+  try {
+    const rows = await fetchCsv(RAW_CSV_URL);
+    window.DATA = rows;
+    populateFilters(rows);
+    render(rows);
+    status.textContent = `Filas: ${rows.length}`;
+  } catch (e){
+    status.textContent = 'Error cargando CSV';
+    tableWrap.textContent = 'No se pudo cargar el CSV: ' + e.message;
+    console.error(e);
+  }
+}
+
+btn.addEventListener('click', ()=>{
+  const q = (qEl.value||'').trim().toLowerCase();
+  const fase = fFase.value;
+  const fuente = fFuente.value;
+  let rows = (window.DATA || []).slice();
+  if(fase) rows = rows.filter(r => String(r.Fase) === String(fase));
+  if(fuente) rows = rows.filter(r => r.Fuente === fuente);
+  if(q) rows = rows.filter(r => (r['Título']||'').toLowerCase().includes(q));
+  render(rows);
+});
+
+// carga inicial
+load();
+</script>
+</body>
+</html>
