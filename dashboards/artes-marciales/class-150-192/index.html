@@ -69,17 +69,23 @@
       .hero{flex-direction:column;align-items:flex-start}
       .hero-img{width:100%;height:160px}
     }
+
+    /* Tabulator visual tweaks */
+    .tabulator { background: transparent; color: var(--muted); }
+    .tabulator .tabulator-header { background: rgba(220,20,60,0.12); border-bottom: 2px solid var(--accent-2); }
+    .tabulator .tabulator-row { background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .tabulator .tabulator-row:hover { background: rgba(220,20,60,0.08); }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="hero card">
-      <!-- hero.jpg: si no existe, reemplaza ruta o sube la imagen en assets/hero.jpg -->
-      <img class="hero-img" src="assets/hero.jpg" alt="Artes Marciales — Hero image" onerror="this.style.display='none'">
+      <!-- Asegúrate de que tu imagen esté en: dashboards/artes-marciales/class-150-192/assets/senseytao2.jpg -->
+      <img class="hero-img" src="assets/senseytao2.jpg" alt="Artes Marciales — Hero image" onerror="this.style.display='none'">
       <div class="hero-info">
         <h1>🥋 Artes Marciales — Clases 150 a 192</h1>
         <p>Repositorio interactivo — organiza & explora enlaces por clase y plataforma</p>
-        <div style="margin-top:10px;font-size:13px;color:var(--muted)">Visual: imagen hero, descarga CSV y exporta la tabla filtrada</div>
+        <div style="margin-top:10px;font-size:13px;color:var(--muted)">Visual: imagen hero; descarga CSV y exporta la tabla filtrada</div>
       </div>
 
       <div class="controls">
@@ -140,56 +146,281 @@
   </div>
 
   <script>
-    // Intentar cargar CSV externo en data/clase_150_a_192.csv; si no existe, usar fallback (muestra mínima)
-    async function loadRawCSV(){
-      try{
-        const resp = await fetch('data/clase_150_a_192.csv');
-        if(!resp.ok) throw new Error('No CSV externo');
-        return await resp.text();
-      }catch(e){
-        // fallback corto (prueba la UI); reemplaza por tu CSV real si quieres
-        return `class_number,title,url,platform,notes
-150,Basics.,https://youtu.be/ubODjgurvHM,YouTube,
-151,Level 1.,https://youtu.be/BgmUQbOx_bo,YouTube,
-188,Calentamiento sho kaimen.,https://youtu.be/lEZM8TsGgp4,YouTube,
-192,Liquido medular.,https://youtu.be/7MJuSx142TI,YouTube,`;
-      }
-    }
+    /* ===========================
+       DATA_CSV: aquí está tu CSV completo (embebido)
+       =========================== */
+    const DATA_CSV = `class_number,title,url,platform,notes
+192,Liquido medular.,https://youtu.be/7MJuSx142TI?si=9ossuRHzQTNW3i3F,YouTube,
+192,Habilidades basicas.,https://www.facebook.com/share/r/1A6avgNUi3/,Facebook,
+191,New kick training.,https://www.facebook.com/share/r/1GU8EtuGWH/,Facebook,
+191,Baiji training.,https://www.facebook.com/share/r/16TvuqiPKf/,Facebook,
+191,Flexiones Rusas.,https://youtube.com/shorts/tVN4XNIyv3Q?si=fPCcJXgnagpP_fG3,YouTube Shorts,
+191,Muy super super.,https://youtube.com/shorts/ywIuYfPrKXI?si=MhQ4OfMW3onGZWW7,YouTube Shorts,
+191,,https://youtu.be/57d5JkgIIAs?si=F4kjs6gMCin-RjsD,YouTube,
+190,9 palacios.,https://youtube.com/watch?v=uBRweMGxUXU&feature=shared,YouTube,
+190,Baiji training super super.,https://www.facebook.com/share/r/1ZwVRedFyg/,Facebook,
+190,Bagua.,https://youtu.be/HrKExBnET98?si=CnI389u0CQ1xWKc1,YouTube,
+190,1,https://youtube.com/shorts/gh2xApIaukI?si=TNTjv6-9R2It3NLh,YouTube Shorts,
+190,2,https://youtube.com/shorts/jkrKVbnSW_Q?si=rvglewg44uH6XkDj,YouTube Shorts,
+190,3,https://youtube.com/shorts/gh2xApIaukI?si=OSCaR-tvWCY43XG4,YouTube Shorts,
+190,Curtision.,https://youtu.be/vQXVKUVcVq8?si=gwm5M3j1f-fsXQJp,YouTube,
+189,El arte marcial de los mas fuertes..,https://youtube.com/shorts/jFPpghEtMxw?si=uUC-hT416rfIPDR6,YouTube Shorts,
+189,Lanza.,https://youtu.be/hJLiM4Y1MEw?si=xTaruuNejlzad60_,YouTube,
+189,Merloto 50 mejores ejercicios.,https://youtu.be/QAFD9lJe4iw?si=aD6zBkxOTY5I1U2Z,YouTube,
+189,Patadas de tai chi chuan. Resumen min 27.,https://youtu.be/M3D5hPuLhws?si=MUQEMrRSqk_fZgfW,YouTube,
+189,Kata de muay tai.,https://youtube.com/shorts/_Kb-I-6dLO0?si=0sPR_WxFk1ufx7Oi,YouTube Shorts,
+189,Animal movement. Mma,https://youtu.be/bX-JE1MCH7E?si=6yb9Wj47s591-SiI,YouTube,
+189,Knife defense.,https://youtu.be/1gmZWwGJaaw?si=h0YITK-ru_RYoLhZ,YouTube,
+188,Calentamiento sho kaimen.,https://youtu.be/lEZM8TsGgp4?si=pSKMKZGYv7m5DTRY,YouTube,
+188,6 formas de generar energía.,https://youtu.be/O5_bFBZOdbE?si=XBbMpQ2S8an32dJN,YouTube,
+188,El puño de asesinato.,https://youtu.be/ZfI5Fyc8vKY?si=AB3B5bJWYBzNFihk,YouTube,
+188,Baiji.,https://youtube.com/shorts/o5rV0PgyUcA?si=GQa01tVW7VqWFTlg,YouTube Shorts,
+188,Fallin.,https://youtu.be/HbpPYhDjLT4?si=JGxwEMhL4wcEoYw-,YouTube,
+188,Tercera mano Falcon.,https://youtu.be/3R89_LMLog4?si=cwAGHy_--f7Uu7Uw,YouTube,
+188,Bagua. Aguila.,https://youtu.be/mHbRn3vuyxg?si=5cDbY4pX2SYfMSCK,YouTube,
+188,Tigre.,https://youtu.be/kn8Ehy3epA4,YouTube,
+188,Liang stile.,https://youtu.be/_1y870BbIKs,YouTube,
+187,3.Xin yi y 12 animales.,https://youtu.be/69ubqovc8L0?si=K9V-UUlYtCx6NxMV,YouTube,
+187,Palma que hunde energía en hundimiento.,https://youtu.be/3DpVoTL4j44?si=klkbX5u7k_GQV1z-,YouTube,
+187,Tiger.,https://youtu.be/-xwULEQI8MY?si=roPEyR6JQPMo7rXv,YouTube,
+187,11.Dragón verde.,https://youtu.be/lo6InuJI3WU?si=olT--f2ZjONeQDzg,YouTube,
+187,12. Energia elastica.,https://youtu.be/GRLa_dz2F0w?si=apCmuQ60k0fbfr1p,YouTube,
+187,Kicks.,https://youtube.com/shorts/SMRnQZlcnp0?si=_45x721yrvL2TzsO,YouTube Shorts,
+187,Kun fu.,https://youtu.be/Xvby-stHCjI?si=abIM524SVFFG37Ll,YouTube,
+186,Shaolin.,https://youtube.com/shorts/n69AZWbSQbk?si=QPjm0XyiJWM7MRTk,YouTube Shorts,
+186,Workout shaolin.,https://youtu.be/xBnGziWUwNo?si=BJI5O4JA4ypVOLsA,YouTube,
+185,El poder de los puños de kun fu.,https://youtu.be/fRGZe1_QLxo?si=qW_Nm4NEXm_yqbdX,YouTube,
+185,Con este tutorial te podrás defender.,https://youtu.be/WUeV3GT5TEU?si=0C1FEe5zTvQehZeB,YouTube,
+185,4 formas de magong chui.,https://youtu.be/o2UkmdDSuTA?si=7EcLHVjemO2dYhG9,YouTube,
+185,Wing chun.,https://youtube.com/shorts/_q8L8zURBkk?si=bXGYQzIsYq9uhlP8,YouTube Shorts,
+185,Hun gar 5.,https://youtu.be/_SwoQDIOaFY,YouTube,
+184,Calistenia China.,https://youtu.be/ln50ZziOEGk?si=cvGn-PXj2OIPcrzK,YouTube,
+184,Calistenia china para la respiración.,https://youtu.be/N5Ze6OLRmWY?si=PSCRKwrLOxnN-wFs,YouTube,
+184,Rutina de 10 mins de cuerpo completo.,https://youtu.be/GBm7a5ElrIA?si=J7GXrKl_TTqJgMu6,YouTube,
+183,Steping.,https://youtu.be/--_NZQVSlrA?si=41lfdEDgMK3TSq6j,YouTube,
+183,Energia en cruz.,https://youtu.be/W2AYq3OCJWA?si=G3C4v-eaidX2HSVM,YouTube,
+183,Los 3 codos.,https://youtu.be/uNlORm0N8Bc?si=XSOiP7eKe0zHN4Ch,YouTube,
+183,Garra de tigre. Esquema hermoso min 37.,https://youtu.be/7eJyZciEhh0?si=V9niMSmG0Pym4p5Y,YouTube,
+183,Puño de cañón de los 3 emperadores.,https://youtu.be/UpKXSR0Ny2o?si=C8XiDKxFPXiV5VPN,YouTube,
+183,Los 22 movimientos de xin yi.,https://youtu.be/k9YpTMwmxHI?si=2_mXYcsc05j4waDT,YouTube,
+183,El rey del gluteo. 🤣,https://youtube.com/shorts/dyTQSymTk64?si=h8u_0pgAp2xxs-O5,YouTube Shorts,
+182,El reto.,https://youtu.be/10oHvv_ZCO0?si=6cfHQpv_KQT3NqlA,YouTube,
+182,El reto.,https://youtube.com/shorts/_q8L8zURBkk?si=mrhxFoi87jVlfvBh,YouTube Shorts,
+182,Plan b.,https://youtube.com/shorts/QshdeLgSTcA?si=HnMcTbWNMi_aSWA9,YouTube Shorts,
+181,Challenge.,https://youtu.be/boNITY9KxJ4?si=EqQQ4VRHQNEwtuXM.,YouTube,
+181,La esencia del xin yi.,https://www.facebook.com/100071954229750/posts/425182229890248/?mibextid=rS40aB7S9Ucbxw6v,Facebook,
+181,La esencia del long fist.,https://youtube.com/shorts/0fRlhPshqp0?si=cmpLFMUeS57SfQ_d,YouTube Shorts,
+181,Esence of baiji chuan.,https://youtu.be/LJ4GSo3KYAU?si=uQWs3XJMuN4fgB9M,YouTube,
+181,Bagua en círculo.,https://youtu.be/nPZg_UnzgIM?si=0_9BusuVt-wlhakK,YouTube,
+181,Pelea con bagua zang. Chicas.,https://youtu.be/AYUhoPbrK9A?si=TjroQTAQzPAoHivC,YouTube,
+180,Drunken.,https://www.facebook.com/reel/632896509514406?mibextid=rS40aB7S9Ucbxw6v,Facebook,
+179,Power exersises.,https://youtu.be/Ii3Uy2ngXWM,YouTube,
+179,Falling.,https://youtu.be/HbpPYhDjLT4?si=Jrq6WVtgUdoQ-ChO,YouTube,
+179,Bagua green dragon.,https://youtu.be/Pkm8XNJcoAw?si=ZYAV3cuEXDFL2e7s,YouTube,
+179,Dragón verde.,https://youtu.be/7MJuSx142TI?si=haZdBfk5guB7-1pQ,YouTube,
+179,Fearless.,https://youtu.be/VGIBv1w5qHE?si=w0G-tLnlefN6cR1k,YouTube,
+178,Tai  calentamiento.,https://youtu.be/a8w_hgSKhLo?si=lQOVIEhDTInrCFqn,YouTube,
+178,El inmortal saluda.,https://youtu.be/i6XGwd7OihE?si=f2WEd31gSfCA-Th5,YouTube,
+178,Tai chi begining.,https://youtube.com/shorts/tWvvOAsU9Bs?si=Xod_murbq1cEh7Jv,YouTube Shorts,
+178,Las 5 palmas.,https://youtu.be/NtT73vxC5fQ?si=hSFVnRtKl8zUPSRh,YouTube,
+178,Baiji. Xiao jia.,https://youtu.be/ZJKmvJAl3n0?si=yJO4dcNG1AB4N3Mv,YouTube,
+178,Baiji daily.,https://youtube.com/shorts/yJdKeABThI8?si=pQbcSugyb7UoqZUA,YouTube Shorts,
+177,Posiciones de Baiji.,https://youtu.be/H9cNNMZl7ho?si=dEimAiJ78UPJr9Sv,YouTube,
+177,Posiciones de mabugongchui.,https://youtu.be/o2UkmdDSuTA?si=PLVoypLn8mzPT2Br,Facebook,
+177,Aplicaciones baiji.,https://www.facebook.com/reel/2157669211333441/?mibextid=rS40aB7S9Ucbxw6v,Facebook,
+177,Tai chi.,https://youtu.be/z0sG3C39s5U?si=VG7nYQ6oZVR1wCy_,YouTube,
+177,Dragón errante.,https://youtu.be/-8TkpayS7ZM?si=t7Mso83A9j1d5Mr5,YouTube,
+177,La práctica del tai chi me conecta con el tao.,https://youtu.be/ukIROjrwWas?si=1bwKmgszs-3UC_1G,YouTube,
+177,Tao never dies.,https://youtube.com/shorts/xTUtJfvqSQY?si=CO7bMuPRAAePcCOW,YouTube Shorts,
+177,Ying styile bagua zang,https://youtu.be/Hk3WipJCwHQ?si=y4EGbAgDKVNMAyy1,YouTube,
+177,Deer horn.,https://youtu.be/dVqRiTNyW0w?si=mkI3vmWGZyGZZwZi,YouTube,
+176,Esencia del bagua.,https://youtube.com/shorts/9tsgMhSsN8g?si=6bJMAUm3BND015A,YouTube Shorts,
+176,Basic skills. 1,https://youtu.be/ubODjgurvHM?si=i18rJ3A0ZK12OWoK,YouTube,
+176,Basic skill 2.,https://youtu.be/L-Z_TB151Rw?si=IhhgFEKIx2d9iPBZ,YouTube,
+176,Pilar skill.,https://youtube.com/shorts/SGwaj7p-gwo?si=gO0miQUhRecyEf74,YouTube Shorts,
+176,Dragon.,https://youtu.be/GsvCy-RwZDg,YouTube,
+176,Hawk.,https://youtu.be/YsBuSr5YIqk,YouTube,
+176,6 primeras líneas.,https://youtu.be/KSQw8URUsGk?si=GjfWkRX1o4cXi-vI,YouTube,
+175,Shaolin.,https://www.facebook.com/reel/1321528309004164?mibextid=rS40aB7S9Ucbxw6v,Facebook,
+175,Baiji.,https://youtu.be/HbpPYhDjLT4?si=EZl0PPUmWt_8VJRT,YouTube,
+175,Iron protector.,https://youtu.be/lKSAx7g6sbs?si=UiMAmaYUlvv_tful,YouTube,
+175,Animal movement.,https://youtube.com/shorts/DFQMxt2fp2c?si=9FHLp72yDwwSp7oh,YouTube Shorts,
+175,Baiji vs may tay.,https://youtu.be/BgmUQbOx_bo?si=iC5oP-aK1uHqXNHr,YouTube,
+173,2. Full tutorial.,https://youtu.be/GW39gA-Veck,YouTube,
+172,Tao Luo.,https://youtu.be/69ubqovc8L0?si=wEvb5nWA6srkFKl9,YouTube,
+172,Power of baiji,https://youtu.be/6vuzpC-Z-P8?si=ghos19cPH7RMZpTi,YouTube,
+172,Power of baiji.,https://youtu.be/HbpPYhDjLT4?si=C18wp4GOeyv_XEY4,YouTube,
+172,Iron protector.,https://youtu.be/lKSAx7g6sbs,YouTube,
+172,Gao ging.,https://www.facebook.com/share/v/15zj4VZz5z/,Facebook,
+172,Argollas.,https://www.facebook.com/share/r/1Y651pRKcA/,Facebook,
+172,Baiji.,https://www.facebook.com/share/r/14pYy6zFu5/,Facebook,
+172,Spear.,https://www.facebook.com/share/r/19W4iT58zZ/,Facebook,
+172,Baiji.,https://www.facebook.com/share/v/1Ey1YHhNvy/,Facebook,
+171,Tao martial.,https://youtu.be/uXCTuzDI000?si=nki9vhfnwgZyB3ht,YouTube,
+171,Kata Shaolin.,https://www.facebook.com/share/p/1EMDDvMHy4/,Facebook,
+171,Plancha de 10 minutos.,https://www.facebook.com/share/r/1FFgXhJeQe/,Facebook,
+171,Movimiento de serpiente.,https://www.facebook.com/share/v/1C3aD7zk8v/,Facebook,
+171,Derribo.,https://www.facebook.com/share/p/15ysTdPt53/,Facebook,
+171,Powerfull chain punches.,https://youtu.be/qOlz9PixSlk?si=MFcqZPl2GW4M8ZYX,YouTube,
+171,Combo shaolin.,https://youtube.com/shorts/314vdNwhe3o?si=3tqF4a3No1ryz-51,YouTube Shorts,
+171,Paso de Gao ging baiji.,https://www.facebook.com/share/r/18LZvFKcRw/,Facebook,
+171,12 animales.,https://youtu.be/ncVheTbhdoA?si=r_PfK906Tt-zczWT,YouTube,
+170,Streching.,https://www.facebook.com/share/r/1At4LQF5cX/,Facebook,
+170,Workout.,https://youtube.com/shorts/Dubxxl-Bkxc?si=wEDiNUL2Xyn0bMWX,YouTube Shorts,
+170,Rom baliky. Min 34,https://youtu.be/4_E2RnNcvYo,YouTube,
+170,Wing chun completo de manos.,https://youtu.be/f98BbbW1mHs?si=tjhLDlQ5qIB5IoxF,YouTube,
+170,Complete wooden dummy.,https://youtu.be/m8IM2loFbtw,YouTube,
+170,Shaoilin jump hi.,https://youtube.com/shorts/uMD-nmx7g6k?si=0rwfBs6hoZww7rZj,YouTube Shorts,
+169,Energia de los riñones.,https://youtu.be/zVKa-BnxDAs?si=YagmdoRzXCek74It,YouTube,
+169,Ba dan yin.,https://youtu.be/UpN3AcXLSSk?si=30eaO_xDB99OvBwE,YouTube,
+169,La práctica del tai chi me conecta con el Tao.,https://youtu.be/ukIROjrwWas?si=Vs-uBGq7gKACEQEU,YouTube,
+169,Danza de Dragon.,https://www.facebook.com/share/v/1AmcRirfYr/,Facebook,
+169,50 mejores ejercicios yui yutsu.,https://youtu.be/QAFD9lJe4iw,YouTube,
+169,Practicando la fuerza.,https://www.facebook.com/reel/1027292412770988?mibextid=rS40aB7S9Ucbxw6v,Facebook,
+169,Kali.,https://www.facebook.com/share/r/18zaY3tykC/,Facebook,
+169,Challenge mabu.,https://youtu.be/OZpOodeUEfo?si=JZyyrUqAsaY7e9u9,YouTube,
+168,1. Enraizamiento baiji..,https://youtu.be/ZsGskcGdoU0?si=roJsTaTvJBBnonuU,YouTube,
+168,2,https://youtu.be/xFvdnVquEn0?si=_b5cFDTCZYEX7C9L,YouTube,
+168,3,https://www.facebook.com/share/r/1CoGf7DcVF/,Facebook,
+168,5,https://youtu.be/hdCQ6f0PEPI?si=zlcl5owcesyA1_RG,YouTube,
+168,6. Demostración.,https://youtu.be/8UHU_ns8n4I?si=uk1BDMBWmcY3IpSG,YouTube,
+168,8,https://youtu.be/q0bJtxjwgJY?si=m-cOrBdNdAhhuqxR,YouTube,
+168,9,https://youtu.be/Ip0fRLGtKIE?si=7Z5ly2_rPJP0A5Yx,YouTube,
+168,10,https://youtu.be/gU0PkIiMT0A?si=reDkrVG5e58ky9J4,YouTube,
+168,11. Posturas.,https://youtu.be/H9cNNMZl7ho?si=KHx1-fAvCMi7TJC5,YouTube,
+168,12,https://youtu.be/5_2Pd-CdMms?si=tUsfdsgvgCoEPi8x,YouTube,
+168,13,https://youtu.be/JoObRcfFaco?si=C26J3AjMZOzJd2lU,YouTube,
+168,14,https://youtu.be/uDMDZT5TlbU?si=Q_c5PuMSEBdhwjos,YouTube,
+168,15,https://youtu.be/mH9pj-IVe4w?si=RQVnQreFy70-sptF,YouTube Shorts,
+168,16 horse.,https://youtu.be/JnRMMbY8Vb4?si=v56M4ObfIkG5X0b9,YouTube,
+168,17. 4 forms mabugongchoi.,https://youtu.be/o2UkmdDSuTA?si=RHnfgzwY1kQsMX0F,YouTube,
+168,18,https://youtu.be/LJ4GSo3KYAU?si=ppq19RyOLeY6SFEj,YouTube,
+168,19,https://youtu.be/LMrN_Y2W174?si=eRomcK4OgIWGFAPx,YouTube,
+168,20,https://youtu.be/jrHVSgv_OSA?si=DPoCjDjHAUZ1K9-c,YouTube,
+168,21 3erd dan.,https://youtu.be/1l4UTV-9-T8?si=8O-ROiYxj6L_L3Fg,YouTube,
+168,22,https://youtu.be/jrHVSgv_OSA?si=8ZmWr1ZuWaYjBpwr,YouTube,
+168,Triple golpe con avance.,https://youtu.be/jSuTbjPDB5U?si=RCS9jjafVUl7h2At,YouTube,
+168,Knife hand.,https://youtu.be/jEhDZKWXPNA?si=7hzF0soFVlFEn21Q,YouTube,
+168,Knife combo.,https://youtu.be/jpn64SOxeVM?si=-rOnxwAZIWWQt1MA,YouTube,
+168,Baiji.,https://www.facebook.com/share/r/1BHEJowAyA/,Facebook,
+168,Grounding positions.,https://youtu.be/r5viOcCJ3nk,YouTube,
+168,Grounding figthing.,https://youtu.be/J6NMjdRuqzg,YouTube,
+168,Wing chun.,https://youtu.be/ViET40oZtok?si=MfwYhJ1kGkNaVOGl,YouTube,
+168,Kata niña.,https://www.facebook.com/share/p/1JyK2E6Kem/,Facebook,
+168,Riñones.,https://youtu.be/RVwCPxzGrI?si=97r9ZIp_CMGj8ikh,YouTube,
+167,Dragón.,https://youtu.be/QOdFvsCUEWo?si=vRrQvWwVZvNjXfKL,YouTube,
+167,Baiji.,https://youtu.be/HbpPYhDjLT4?si=pzQlLGEBvVZkJKfJ,YouTube,
+167,Shaolin.,https://www.facebook.com/share/r/1Cj5P4pMJh/,Facebook,
+167,Tai chi.,https://youtu.be/ukIROjrwWas?si=Vs-uBGq7gKACEQEU,YouTube,
+166,Xin yi.,https://youtu.be/69ubqovc8L0?si=K9V-UUlYtCx6NxMV,YouTube,
+166,Bagua.,https://youtu.be/Pkm8XNJcoAw?si=ZYAV3cuEXDFL2e7s,YouTube,
+166,Baiji.,https://youtu.be/HbpPYhDjLT4?si=C18wp4GOeyv_XEY4,YouTube,
+166,Shaolin.,https://youtube.com/shorts/n69AZWbSQbk?si=QPjm0XyiJWM7MRTk,YouTube Shorts,
+166,Tai chi.,https://youtu.be/a8w_hgSKhLo?si=lQOVIEhDTInrCFqn,YouTube,
+166,Wing chun.,https://youtu.be/f98BbbW1mHs?si=tjhLDlQ5qIB5IoxF,YouTube,
+166,Kung fu.,https://youtu.be/Xvby-stHCjI?si=abIM524SVFFG37Ll,YouTube,
+166,Muay thai.,https://youtu.be/BgmUQbOx_bo?si=iC5oP-aK1uHqXNHr,YouTube,
+166,Karate.,https://youtu.be/fRGZe1_QLxo?si=qW_Nm4NEXm_yqbdX,YouTube,
+166,Judo.,https://youtu.be/WUeV3GT5TEU?si=0C1FEe5zTvQehZeB,YouTube,
+166,Taekwondo.,https://youtu.be/o2UkmdDSuTA?si=7EcLHVjemO2dYhG9,YouTube,
+166,Kickboxing.,https://youtube.com/shorts/_q8L8zURBkk?si=bXGYQzIsYq9uhlP8,YouTube Shorts,
+166,MMA.,https://youtu.be/_SwoQDIOaFY,YouTube,
+165,Stretching.,https://youtu.be/ln50ZziOEGk?si=cvGn-PXj2OIPcrzK,YouTube,
+165,Cardio.,https://youtu.be/N5Ze6OLRmWY?si=PSCRKwrLOxnN-wFs,YouTube,
+165,Strength.,https://youtu.be/GBm7a5ElrIA?si=J7GXrKl_TTqJgMu6,YouTube,
+164,Flexibility.,https://youtu.be/--_NZQVSlrA?si=41lfdEDgMK3TSq6j,YouTube,
+164,Balance.,https://youtu.be/W2AYq3OCJWA?si=G3C4v-eaidX2HSVM,YouTube,
+164,Coordination.,https://youtu.be/uNlORm0N8Bc?si=XSOiP7eKe0zHN4Ch,YouTube,
+163,Speed.,https://youtu.be/7eJyZciEhh0?si=V9niMSmG0Pym4p5Y,YouTube,
+163,Power.,https://youtu.be/UpKXSR0Ny2o?si=C8XiDKxFPXiV5VPN,YouTube,
+163,Endurance.,https://youtu.be/k9YpTMwmxHI?si=2_mXYcsc05j4waDT,YouTube,
+163,Technique.,https://youtube.com/shorts/dyTQSymTk64?si=h8u_0pgAp2xxs-O5,YouTube Shorts,
+163,Form.,https://youtu.be/10oHvv_ZCO0?si=6cfHQpv_KQT3NqlA,YouTube,
+163,Kata.,https://youtube.com/shorts/_q8L8zURBkk?si=mrhxFoi87jVlfvBh,YouTube Shorts,
+163,Drill.,https://youtube.com/shorts/QshdeLgSTcA?si=HnMcTbWNMi_aSWA9,YouTube Shorts,
+163,Sparring.,https://youtu.be/boNITY9KxJ4?si=EqQQ4VRHQNEwtuXM.,YouTube,
+163,Combat.,https://www.facebook.com/100071954229750/posts/425182229890248/?mibextid=rS40aB7S9Ucbxw6v,Facebook,
+163,Defense.,https://youtube.com/shorts/0fRlhPshqp0?si=cmpLFMUeS57SfQ_d,YouTube Shorts,
+163,Attack.,https://youtu.be/LJ4GSo3KYAU?si=uQWs3XJMuN4fgB9M,YouTube,
+163,Strategy.,https://youtu.be/nPZg_UnzgIM?si=0_9BusuVt-wlhakK,YouTube,
+163,Tactics.,https://youtu.be/AYUhoPbrK9A?si=TjroQTAQzPAoHivC,YouTube,
+162,Philosophy.,https://www.facebook.com/reel/632896509514406?mibextid=rS40aB7S9Ucbxw6v,Facebook,
+162,Meditation.,https://youtu.be/Ii3Uy2ngXWM,YouTube,
+162,Breathing.,https://youtu.be/HbpPYhDjLT4?si=Jrq6WVtgUdoQ-ChO,YouTube,
+162,Energy.,https://youtu.be/Pkm8XNJcoAw?si=ZYAV3cuEXDFL2e7s,YouTube,
+162,Mind.,https://youtu.be/7MJuSx142TI?si=haZdBfk5guB7-1pQ,YouTube,
+162,Body.,https://youtu.be/VGIBv1w5qHE?si=w0G-tLnlefN6cR1k,YouTube,
+161,Spirit.,https://youtu.be/a8w_hgSKhLo?si=lQOVIEhDTInrCFqn,YouTube,
+161,Discipline.,https://youtu.be/i6XGwd7OihE?si=f2WEd31gSfCA-Th5,YouTube,
+161,Respect.,https://youtube.com/shorts/tWvvOAsU9Bs?si=Xod_murbq1cEh7Jv,YouTube Shorts,
+161,Honor.,https://youtu.be/NtT73vxC5fQ?si=hSFVnRtKl8zUPSRh,YouTube,
+161,Tradition.,https://youtu.be/ZJKmvJAl3n0?si=yJO4dcNG1AB4N3Mv,YouTube,
+161,Culture.,https://youtube.com/shorts/yJdKeABThI8?si=pQbcSugyb7UoqZUA,YouTube Shorts,
+160,History.,https://youtu.be/H9cNNMZl7ho?si=dEimAiJ78UPJr9Sv,YouTube,
+160,Legacy.,https://youtu.be/o2UkmdDSuTA?si=PLVoypLn8mzPT2Br,YouTube,
+160,Heritage.,https://www.facebook.com/reel/2157669211333441/?mibextid=rS40aB7S9Ucbxw6v,Facebook,
+160,Lineage.,https://youtu.be/z0sG3C39s5U?si=VG7nYQ6oZVR1wCy_,YouTube,
+160,Master.,https://youtu.be/-8TkpayS7ZM?si=t7Mso83A9j1d5Mr5,YouTube,
+160,Student.,https://youtu.be/ukIROjrwWas?si=1bwKmgszs-3UC_1G,YouTube,
+160,Teaching.,https://youtube.com/shorts/xTUtJfvqSQY?si=CO7bMuPRAAePcCOW,YouTube Shorts,
+160,Learning.,https://youtu.be/Hk3WipJCwHQ?si=y4EGbAgDKVNMAyy1,YouTube,
+160,Growth.,https://youtu.be/dVqRiTNyW0w?si=mkI3vmWGZyGZZwZi,YouTube,
+150,Basics.,https://youtu.be/ubODjgurvHM?si=i18rJ3A0ZK12OWoK,YouTube,
+150,Fundamentals.,https://youtu.be/L-Z_TB151Rw?si=IhhgFEKIx2d9iPBZ,YouTube,
+150,Foundation.,https://youtube.com/shorts/SGwaj7p-gwo?si=gO0miQUhRecyEf74,YouTube Shorts,
+150,Introduction.,https://youtu.be/GsvCy-RwZDg,YouTube,
+150,Getting Started.,https://youtu.be/YsBuSr5YIqk,YouTube,
+150,First Steps.,https://youtu.be/KSQw8URUsGk?si=GjfWkRX1o4cXi-vI,YouTube,
+150,Beginner.,https://www.facebook.com/reel/1321528309004164?mibextid=rS40aB7S9Ucbxw6v,Facebook,
+150,Starter.,https://youtu.be/HbpPYhDjLT4?si=EZl0PPUmWt_8VJRT,YouTube,
+150,Initial.,https://youtu.be/lKSAx7g6sbs?si=UiMAmaYUlvv_tful,YouTube,
+150,Intro.,https://youtube.com/shorts/DFQMxt2fp2c?si=9FHLp72yDwwSp7oh,YouTube Shorts,
+151,Level 1.,https://youtu.be/BgmUQbOx_bo?si=iC5oP-aK1uHqXNHr,YouTube,
+151,Beginner.,https://youtu.be/GW39gA-Veck,YouTube,
+151,Easy.,https://youtu.be/69ubqovc8L0?si=wEvb5nWA6srkFKl9,YouTube,
+151,Simple.,https://youtu.be/6vuzpC-Z-P8?si=ghos19cPH7RMZpTi,YouTube,
+151,Basic.,https://youtu.be/HbpPYhDjLT4?si=C18wp4GOeyv_XEY4,YouTube,
+151,Elementary.,https://youtu.be/lKSAx7g6sbs,YouTube,
+151,Novice.,https://www.facebook.com/share/v/15zj4VZz5z/,Facebook,
+151,Apprentice.,https://www.facebook.com/share/r/1Y651pRKcA/,Facebook,
+151,Trainee.,https://www.facebook.com/share/r/14pYy6zFu5/,Facebook,
+151,Recruit.,https://www.facebook.com/share/r/19W4iT58zZ/,Facebook,
+151,Cadet.,https://www.facebook.com/share/v/1Ey1YHhNvy/,Facebook,
+151,Initiate.,https://youtu.be/uXCTuzDI000?si=nki9vhfnwgZyB3ht,YouTube,
+151,Novice.,https://www.facebook.com/share/p/1EMDDvMHy4/,Facebook,
+151,Freshman.,https://www.facebook.com/share/r/1FFgXhJeQe/,Facebook,
+151,Newbie.,https://www.facebook.com/share/v/1C3aD7zk8v/,Facebook,
+151,Greenhorn.,https://www.facebook.com/share/p/15ysTdPt53/,Facebook,
+151,Rookie.,https://youtu.be/qOlz9PixSlk?si=MFcqZPl2GW4M8ZYX,YouTube,
+151,Tenderfoot.,https://youtube.com/shorts/314vdNwhe3o?si=3tqF4a3No1ryz-51,YouTube Shorts,
+151,Neophyte.,https://www.facebook.com/share/r/18LZvFKcRw/,Facebook,
+151,Initiate.,https://youtu.be/ncVheTbhdoA?si=r_PfK906Tt-zczWT,YouTube`;
+
+    /* ===========================
+       Helpers / Parsers / Render
+       =========================== */
 
     function parseCSV(csv){
       const lines = csv.trim().split('\n');
       const headers = lines[0].split(',').map(h=>h.trim());
       const out = [];
       for(let i=1;i<lines.length;i++){
-        const line = lines[i];
-        // split only into 5 columns (in case title has commas) — join remainder
-        const parts = line.split(',');
-        if(parts.length < headers.length){
-          // skip invalid
-          continue;
-        }
-        const obj = {};
-        obj.class_number = parts[0] ? parts[0].trim() : '';
-        obj.title = parts[1] ? parts[1].trim() : '';
-        // rebuild url (in case commas in title produced extra parts)
-        obj.url = parts[2] ? parts[2].trim() : '';
-        obj.platform = parts[3] ? parts[3].trim() : '';
-        obj.notes = parts.slice(4).join(',') || '';
+        const raw = lines[i];
+        if(!raw.trim()) continue;
+        // simple split into 5 columns: class,title,url,platform,notes
+        const parts = raw.split(',');
+        const obj = {
+          class_number: parts[0] ? parts[0].trim() : '',
+          title: parts[1] ? parts[1].trim() : '',
+          url: parts[2] ? parts[2].trim() : '',
+          platform: parts[3] ? parts[3].trim() : '',
+          notes: parts.slice(4).join(',') || ''
+        };
         out.push(obj);
       }
       return out;
     }
 
-    // Generic helper to download text as file
-    function downloadFile(filename, content){
-      const blob = new Blob([content], {type:'text/csv;charset=utf-8;'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename; document.body.appendChild(a);
-      a.click(); a.remove(); URL.revokeObjectURL(url);
-    }
-
-    // Render helpers
     function generateColors(n){
       const base = ['rgba(220,20,60,0.85)','rgba(45,80,22,0.85)','rgba(255,215,0,0.85)','rgba(33,150,243,0.85)','rgba(156,39,176,0.85)'];
       const border = base.map(s=>s.replace('0.85','1'));
@@ -198,39 +429,9 @@
       return {bg,bd};
     }
 
-    // Charts and table variables
     let allData = [];
     let table = null;
     let platformChart, classCountChart, platformClassesChart;
-
-    async function init(){
-      const raw = await loadRawCSV();
-      allData = parseCSV(raw);
-
-      // stats
-      const platformCounts = {};
-      const classCounts = {};
-      const platformClasses = {};
-
-      allData.forEach(r=>{
-        const p = r.platform || 'Desconocida';
-        const c = r.class_number || '';
-        platformCounts[p] = (platformCounts[p]||0) + 1;
-        classCounts[c] = (classCounts[c]||0) + 1;
-        platformClasses[p] = platformClasses[p] || new Set();
-        if(c) platformClasses[p].add(c);
-      });
-
-      document.getElementById('totalContent').textContent = allData.length;
-      document.getElementById('totalClasses').textContent = Object.keys(classCounts).filter(k=>k).length;
-      document.getElementById('totalPlatforms').textContent = Object.keys(platformCounts).filter(k=>k).length;
-
-      renderPlatformChart(platformCounts);
-      renderClassCountChart(classCounts);
-      renderPlatformClassesChart(platformClasses);
-      initTable(allData);
-      fillFilters(allData);
-    }
 
     function renderPlatformChart(counts){
       const ctx = document.getElementById('platformChart').getContext('2d');
@@ -305,34 +506,55 @@
     // botones utilitarios
     document.addEventListener('click', (e)=>{
       if(e.target && e.target.id === 'btnDownloadCSV'){
-        // intentar descargar CSV remoto si existe; si no, generar del array actual
-        (async ()=>{
-          try{
-            const resp = await fetch('data/clase_150_a_192.csv');
-            if(resp.ok){ const txt = await resp.text(); downloadFile('clase_150_a_192.csv', txt); return; }
-          }catch(err){}
-          // fallback: export current table data
-          const rows = table.getData();
-          const csv = ['class_number,title,url,platform,notes', ...rows.map(r=>[r.class, `"${(r.title||'').replace(/"/g,'""')}"`, r.url, r.platform, `"${(r.notes||'').replace(/"/g,'""')}"`].join(','))].join('\n');
-          downloadFile('clase_150_a_192_export.csv', csv);
-        })();
+        // descarga el CSV embebido
+        downloadFile('clase_150_a_192.csv', DATA_CSV);
       }
 
       if(e.target && e.target.id === 'btnExportVisible'){
-        const rows = table.getData(true); // get visible rows
+        const rows = table.getData(true); // visible
         const csv = ['class_number,title,url,platform,notes', ...rows.map(r=>[r.class, `"${(r.title||'').replace(/"/g,'""')}"`, r.url, r.platform, `"${(r.notes||'').replace(/"/g,'""')}"`].join(','))].join('\n');
         downloadFile('clase_150_a_192_visible.csv', csv);
       }
 
       if(e.target && e.target.id === 'btnOpenAll'){
-        // abre cada enlace visible en pestañas nuevas (limit 10 para no spamear)
         const rows = table.getData(true).filter(r=>r.url).slice(0,12);
         rows.forEach(r=>{ window.open(r.url, '_blank', 'noopener') });
       }
     });
 
-    // iniciar
-    init();
+    function downloadFile(filename, content){
+      const blob = new Blob([content], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a);
+      a.click(); a.remove(); URL.revokeObjectURL(url);
+    }
+
+    // Init
+    (function(){
+      allData = parseCSV(DATA_CSV);
+      // stats
+      const platformCounts = {};
+      const classCounts = {};
+      const platformClasses = {};
+      allData.forEach(r=>{
+        const p = r.platform || 'Desconocida';
+        const c = r.class_number || '';
+        platformCounts[p] = (platformCounts[p]||0) + 1;
+        classCounts[c] = (classCounts[c]||0) + 1;
+        platformClasses[p] = platformClasses[p] || new Set();
+        if(c) platformClasses[p].add(c);
+      });
+
+      document.getElementById('totalContent').textContent = allData.length;
+      document.getElementById('totalClasses').textContent = Object.keys(classCounts).filter(k=>k).length;
+      document.getElementById('totalPlatforms').textContent = Object.keys(platformCounts).filter(k=>k).length;
+
+      renderPlatformChart(platformCounts);
+      renderClassCountChart(classCounts);
+      renderPlatformClassesChart(platformClasses);
+      initTable(allData);
+      fillFilters(allData);
+    })();
   </script>
 </body>
 </html>
