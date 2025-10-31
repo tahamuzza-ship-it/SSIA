@@ -1,94 +1,255 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HYDRA War-Room</title>
-  <style>
-    :root{--bg:#0f1220;--card:#1a1f36;--border:#2e3650;--text:#e6e8f0;--muted:#aab2cf}
-    *{box-sizing:border-box}
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,sans-serif;margin:0;padding:24px;background:var(--bg);color:var(--text)}
-    h1{margin:0 0 16px 0;font-size:22px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 6px 20px rgba(0,0,0,.2)}
-    .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;margin-left:6px;border:1px solid transparent}
-    .ok{background:#153f2d;color:#90e6b5;border-color:#245c43}
-    .err{background:#3f1521;color:#f3a5b5;border-color:#6a2132}
-    .pending{background:#3a3218;color:#f1e0a3;border-color:#5e5122}
-    code, pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px;white-space:pre-wrap;word-break:break-word}
-    .muted{color:var(--muted)}
-    details{margin-top:12px}
-    .kpis{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    .kpi{background:rgba(255,255,255,0.03);border:1px dashed var(--border);padding:8px 10px;border-radius:10px}
-    a{color:#9ecbff}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Artes Marciales Tahamuuzza</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            background-image: url('assets/senseytao2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.8); /* Oscurecer el fondo para mejor legibilidad */
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 8px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: #4CAF50; /* Color distintivo */
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        .card h2 {
+            margin-top: 0;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+            color: #4CAF50;
+        }
+        .data-list {
+            max-height: 300px;
+            overflow-y: auto;
+            list-style: none;
+            padding: 0;
+        }
+        .data-list li {
+            padding: 5px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+        }
+        .data-list li:last-child {
+            border-bottom: none;
+        }
+        .data-list a {
+            color: #81C784;
+            text-decoration: none;
+        }
+        .data-list a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-  <h1>🛡️ HYDRA War-Room</h1>
-  <div class="grid" id="cards"></div>
-  <footer class="muted" style="margin-top:24px">Datos en vivo desde GitHub JSON.</footer>
+    <div class="overlay">
+        <div class="header">
+            <h1>Dashboard Artes Marciales Tahamuuzza</h1>
+            <p>Clases 150 a 192 - Repositorio de Contenido</p>
+        </div>
 
-<script>
-// JSON RAW en tu GitHub (simple y correcto)
-const DATA_URL = "https://raw.githubusercontent.com/tahamuzza-ship-it/SSIA/main/dashboard.json";
+        <div class="dashboard-grid">
+            <div class="card" id="platform-chart-card">
+                <h2>Distribución por Plataforma</h2>
+                <canvas id="platformChart"></canvas>
+            </div>
 
-function badge(status){
-  if(status==="success") return '<span class="pill ok">OK</span>';
-  if(status==="error") return '<span class="pill err">ERROR</span>';
-  return '<span class="pill pending">PENDIENTE</span>';
-}
-function kv(obj, k=5){
-  if(!obj || typeof obj!=='object') return [];
-  return Object.keys(obj).slice(0,k).map(key => `${key}: ${String(obj[key]).slice(0,80)}`);
-}
+            <div class="card" id="class-count-card">
+                <h2>Contenido por Número de Clase</h2>
+                <canvas id="classCountChart"></canvas>
+            </div>
 
-async function render(){
-  const wrap = document.getElementById('cards');
-  wrap.innerHTML = "<div class='card'>Cargando datos…</div>";
-  try{
-    const resp = await fetch(DATA_URL, {cache:"no-store"});
-    const raw = await resp.json();
-    const list = Array.isArray(raw) ? raw : [raw];
-    wrap.innerHTML = "";
+            <div class="card" id="content-list-card">
+                <h2>Lista de Contenido (Clases 192 - 190)</h2>
+                <ul class="data-list" id="contentList">
+                    <!-- Contenido cargado por JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </div>
 
-    list.forEach((item, i) => {
-      const status = item.status || (item.error ? "error" : (item.pending ? "pending" : "success"));
-      const message = item.message || item.descripcion || "Datos cargados";
-      const meta = item.data || item.details || item;
-      const pretty = JSON.stringify(item, null, 2);
+    <script>
+        const DATA_FILE = 'data/clase_150_a_192.csv';
 
-      const html = `
-        <div class="card">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div><strong>Registro ${i+1}</strong> ${badge(status)}</div>
-          </div>
-          <div class="muted" style="margin-top:8px">${message}</div>
-          <div class="kpis">${kv(meta,5).map(x=>`<span class="kpi"><code>${x}</code></span>`).join('')}</div>
-          <details><summary>Ver JSON</summary><pre><code>${pretty}</code></pre></details>
-        </div>`;
-      wrap.insertAdjacentHTML('beforeend', html);
+        // Función para cargar y procesar los datos
+        function loadData() {
+            d3.csv(DATA_FILE).then(data => {
+                console.log('Datos cargados:', data);
+                
+                // 1. Procesar datos para gráficos
+                const platformCounts = data.reduce((acc, d) => {
+                    acc[d.platform] = (acc[d.platform] || 0) + 1;
+                    return acc;
+                }, {});
 
-      if (Array.isArray(item.incidentes)) {
-        const rows = item.incidentes.slice(0,5).map(r =>
-          `<li><code>${r.id}</code> • ${r.sev} • ${r.estado} — ${r.titulo}</li>`).join('');
-        wrap.insertAdjacentHTML('beforeend', `<div class="card"><strong>Incidentes</strong><ul>${rows}</ul></div>`);
-      }
-      if (Array.isArray(item.accounts)) {
-        const rows = item.accounts.slice(0,5).map(r =>
-          `<li>${r.nombre} — impacto: <code>${r.impacto}</code></li>`).join('');
-        wrap.insertAdjacentHTML('beforeend', `<div class="card"><strong>Accounts</strong><ul>${rows}</ul></div>`);
-      }
-    });
+                const classCounts = data.reduce((acc, d) => {
+                    acc[d.class_number] = (acc[d.class_number] || 0) + 1;
+                    return acc;
+                }, {});
 
-    if(!list.length){
-      wrap.innerHTML = "<div class='card'>No hay registros en el JSON.</div>";
-    }
-  }catch(e){
-    console.error(e);
-    wrap.innerHTML = "<div class='card'><strong>Error</strong>: No pude leer el JSON de GitHub.</div>";
-  }
-}
-render();
-</script>
+                // 2. Renderizar gráficos
+                renderPlatformChart(platformCounts);
+                renderClassCountChart(classCounts);
+
+                // 3. Renderizar lista de contenido
+                renderContentList(data);
+
+            }).catch(error => {
+                console.error('Error al cargar los datos:', error);
+                document.getElementById('contentList').innerHTML = '<li>Error al cargar los datos. Asegúrate de que el archivo CSV está en la ruta correcta.</li>';
+            });
+        }
+
+        // Función para generar colores dinámicos
+        function generateColors(count) {
+            const colors = [
+                'rgba(76, 175, 80, 0.7)',  // Verde
+                'rgba(33, 150, 243, 0.7)', // Azul
+                'rgba(255, 152, 0, 0.7)',  // Naranja
+                'rgba(244, 67, 54, 0.7)',  // Rojo
+                'rgba(156, 39, 176, 0.7)', // Púrpura
+                'rgba(0, 188, 212, 0.7)',  // Cyan
+                'rgba(255, 235, 59, 0.7)'  // Amarillo
+            ];
+            const borderColors = colors.map(c => c.replace('0.7', '1'));
+            
+            let background = [];
+            let border = [];
+            for (let i = 0; i < count; i++) {
+                background.push(colors[i % colors.length]);
+                border.push(borderColors[i % borderColors.length]);
+            }
+            return { background, border };
+        }
+
+        // Gráfico de Distribución por Plataforma
+        function renderPlatformChart(counts) {
+            const labels = Object.keys(counts);
+            const dataValues = Object.values(counts);
+            const { background, border } = generateColors(labels.length);
+
+            new Chart(document.getElementById('platformChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: dataValues,
+                        backgroundColor: background,
+                        borderColor: border,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        },
+                        title: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de Contenido por Número de Clase
+        function renderClassCountChart(counts) {
+            // Ordenar las clases de forma descendente (192, 191, ...)
+            const sortedClassNumbers = Object.keys(counts).sort((a, b) => b - a);
+            const labels = sortedClassNumbers.map(c => `Clase ${c}`);
+            const dataValues = sortedClassNumbers.map(c => counts[c]);
+            const { background, border } = generateColors(labels.length);
+
+            new Chart(document.getElementById('classCountChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Número de Contenidos',
+                        data: dataValues,
+                        backgroundColor: background[0], // Usar un solo color para barras
+                        borderColor: border[0],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Lista de Contenido
+        function renderContentList(data) {
+            const listElement = document.getElementById('contentList');
+            // Filtrar y mostrar solo las últimas 3 clases para no saturar la lista
+            const latestClasses = data.filter(d => parseInt(d.class_number) >= 190 && parseInt(d.class_number) <= 192);
+            // Ordenar por número de clase descendente y luego por título
+            latestClasses.sort((a, b) => b.class_number - a.class_number || a.title.localeCompare(b.title));
+
+            listElement.innerHTML = ''; // Limpiar lista
+            latestClasses.forEach(item => {
+                const listItem = document.createElement('li');
+                const title = item.title && item.title.trim() !== '' ? item.title : `Contenido sin título`;
+                const platform = item.platform ? `(${item.platform})` : '';
+                listItem.innerHTML = `<strong>Clase ${item.class_number}:</strong> <a href="${item.url}" target="_blank">${title}</a> ${platform}`;
+                listElement.appendChild(listItem);
+            });
+        }
+
+        // Iniciar la carga de datos al cargar la página
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
 </body>
 </html>

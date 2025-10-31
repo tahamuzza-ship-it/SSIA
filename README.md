@@ -1,21 +1,30 @@
-# Tahamusha Dashboard Artes Marciales — clase 150 a 192
+# 🥋 Dashboard Artes Marciales Tahamuuzza 🥋
 
-Dashboard estático que muestra la colección de clases (150 a 192) con visualizaciones y enlaces a los videos / recursos.
+Este repositorio contiene un dashboard interactivo para visualizar y acceder al contenido de las **Clases 150 a 192** de artes marciales Tahamuuzza.
 
-## Contenido del proyecto
+## 📊 Visualización de Datos
 
-- `index.html` — página principal del dashboard (usa D3.js / Chart.js para visualizar datos).
-- `data/clase_150_a_192.csv` — datos en CSV con los campos: `class_number,title,url,platform,notes`.
-- `assets/` — imágenes y recursos estáticos (ej. `assets/senseytao2.jpg`).
-- `README.md` — este archivo.
+El dashboard (`index.html`) utiliza el archivo de datos `data/clase_150_a_192.csv` para generar las siguientes visualizaciones:
 
-## Cómo probar localmente (recomendado)
+1.  **Distribución por Plataforma:** Gráfico de pastel que muestra la proporción de contenido alojado en diferentes plataformas (YouTube, Facebook, etc.).
+2.  **Contenido por Número de Clase:** Gráfico de barras que indica la cantidad de contenido disponible para cada número de clase (de 150 a 192).
 
-1. Abre una terminal en la carpeta raíz del proyecto.
-2. Sirve el sitio por HTTP para evitar problemas con `file://`:
+## 🔗 Acceso al Dashboard
 
-```bash
-# Si tienes Python 3
-python3 -m http.server 8000
-# abre en el navegador:
-http://localhost:8000/
+Para ver el dashboard, simplemente abre el archivo `index.html` en tu navegador o utiliza GitHub Pages para alojarlo.
+
+### Estructura del Repositorio
+
+*   `index.html`: Archivo principal del dashboard.
+*   `data/clase_150_a_192.csv`: El archivo de datos original con la información de las clases.
+*   `assets/senseytao2.jpg`: Imagen de fondo utilizada en el dashboard.
+
+## 💻 Tecnologías Utilizadas
+
+*   **HTML5/CSS3:** Estructura y estilos.
+*   **JavaScript:** Lógica de carga y visualización de datos.
+*   **D3.js:** Utilizado para la carga y parseo del archivo CSV.
+*   **Chart.js:** Librería para la generación de gráficos interactivos.
+
+---
+*Creado por Manus, tu asistente de IA.*
