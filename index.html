@@ -1,255 +1,253 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Artes Marciales Tahamuuzza</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #fff;
-            background-image: url('assets/senseytao2.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
-        }
-        .overlay {
-            background-color: rgba(0, 0, 0, 0.8); /* Oscurecer el fondo para mejor legibilidad */
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .header {
-            text-align: center;
-            padding: 20px;
-            margin-bottom: 20px;
-            background-color: rgba(0, 0, 0, 0.6);
-            border-radius: 8px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 2.5em;
-            color: #4CAF50; /* Color distintivo */
-        }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .card {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-        }
-        .card h2 {
-            margin-top: 0;
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 10px;
-            color: #4CAF50;
-        }
-        .data-list {
-            max-height: 300px;
-            overflow-y: auto;
-            list-style: none;
-            padding: 0;
-        }
-        .data-list li {
-            padding: 5px 0;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
-        }
-        .data-list li:last-child {
-            border-bottom: none;
-        }
-        .data-list a {
-            color: #81C784;
-            text-decoration: none;
-        }
-        .data-list a:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>tahamuzza — Dashboard Artes Marciales</title>
+
+  <!-- Chart.js y d3 (deferred) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js" defer></script>
+  <script src="https://d3js.org/d3.v7.min.js" defer></script>
+
+  <style>
+    :root{
+      --bg-dark:#071020;
+      --glass: rgba(255,255,255,0.06);
+      --accent:#7dd3fc;
+      --green:#4caf50;
+      --muted: rgba(255,255,255,0.9);
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;color:var(--muted);}
+    body{
+      background: url('assets/senseytao2.jpg') center/cover no-repeat fixed;
+      display:flex;align-items:stretch;
+    }
+    .overlay{
+      background: linear-gradient(180deg, rgba(3,6,12,0.65), rgba(2,8,20,0.75));
+      width:100%;
+      padding:28px;
+      min-height:100vh;
+      box-sizing:border-box;
+    }
+    .container{max-width:1100px;margin:0 auto;}
+    header{display:flex;align-items:center;gap:18px;justify-content:space-between;margin-bottom:20px}
+    .brand {display:flex;align-items:center;gap:14px}
+    .logo {
+      width:64px;height:64px;border-radius:12px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--green);
+      box-shadow:0 6px 22px rgba(2,8,20,0.6);
+      font-size:22px;
+      text-transform:lowercase;
+    }
+    h1{margin:0;font-size:1.6rem;color:var(--green);letter-spacing:0.6px;text-transform:lowercase}
+    .subtitle{color:rgba(255,255,255,0.75);font-size:0.95rem;text-transform:none}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:18px;
+      align-items:start;
+    }
+    .panel{
+      background:var(--glass);
+      border-radius:12px;
+      padding:18px;
+      box-shadow: 0 8px 30px rgba(2,6,20,0.6);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .small-grid{
+      display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px;
+    }
+
+    canvas{max-width:100%!important;height:260px!important;border-radius:8px}
+
+    .list{
+      list-style:none;padding:0;margin:0;max-height:380px;overflow:auto;
+    }
+    .list li{
+      padding:10px;border-radius:8px;margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); 
+      display:flex;justify-content:space-between;align-items:center;font-size:0.95rem;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .chip{font-size:0.85rem;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,0.35);color:var(--muted);border:1px solid rgba(255,255,255,0.02)}
+    a.link{color:var(--accent);text-decoration:none;font-weight:600}
+    footer{margin-top:18px;color:rgba(255,255,255,0.6);font-size:0.9rem;text-align:center;text-transform:lowercase}
+    @media(max-width:980px){
+      .grid{grid-template-columns:1fr; padding-bottom:40px}
+      .small-grid{grid-template-columns:1fr}
+      header{flex-direction:column;align-items:flex-start;gap:6px}
+    }
+  </style>
 </head>
 <body>
-    <div class="overlay">
-        <div class="header">
-            <h1>Dashboard Artes Marciales Tahamuuzza</h1>
-            <p>Clases 150 a 192 - Repositorio de Contenido</p>
+  <div class="overlay">
+    <div class="container">
+      <!-- CABECERA -->
+      <header>
+        <div class="brand">
+          <div class="logo">t</div>
+          <div>
+            <h1>tahamuzza</h1>
+            <div class="subtitle">Dashboard — Artes Marciales | Clases 150–192</div>
+          </div>
         </div>
+        <div style="text-align:right">
+          <div class="chip">Repositorio: SSIA</div>
+        </div>
+      </header>
 
-        <div class="dashboard-grid">
-            <div class="card" id="platform-chart-card">
-                <h2>Distribución por Plataforma</h2>
+      <!-- LAYOUT -->
+      <div class="grid">
+        <!-- principal -->
+        <div>
+          <div class="panel">
+            <h3 style="margin:0 0 12px;color:var(--accent)">Visión general</h3>
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+              <div style="flex:1;min-width:220px">
                 <canvas id="platformChart"></canvas>
-            </div>
-
-            <div class="card" id="class-count-card">
-                <h2>Contenido por Número de Clase</h2>
+              </div>
+              <div style="flex:1;min-width:220px">
                 <canvas id="classCountChart"></canvas>
+              </div>
             </div>
 
-            <div class="card" id="content-list-card">
-                <h2>Lista de Contenido (Clases 192 - 190)</h2>
-                <ul class="data-list" id="contentList">
-                    <!-- Contenido cargado por JavaScript -->
+            <div class="small-grid">
+              <div class="panel" style="padding:12px">
+                <h4 style="margin:0 0 8px;color:var(--green)">Últimas clases</h4>
+                <ul id="contentList" class="list">
+                  <!-- lista poblada por JS -->
                 </ul>
+              </div>
+              <div class="panel" style="padding:12px">
+                <h4 style="margin:0 0 8px;color:var(--green)">Notas rápidas</h4>
+                <p style="margin:0;color:rgba(255,255,255,0.8)">Asegura que <code>assets/senseytao2.jpg</code> y (opcional) <code>data/clase_150_a_192.csv</code> estén en el repo.</p>
+              </div>
             </div>
+          </div>
         </div>
+
+        <!-- lateral -->
+        <aside>
+          <div class="panel">
+            <h4 style="margin-top:0;color:var(--accent)">Acerca</h4>
+            <p style="margin:0 0 12px;color:rgba(255,255,255,0.8)">Dashboard para mostrar distribución por plataforma y contenidos por clase — hecho para tahamuzza.</p>
+            <p style="margin:0 0 10px"><a class="link" href="https://github.com/tahamuzza-ship-it/SSIA" target="_blank">Ver repo en GitHub</a></p>
+            <div style="margin-top:10px">
+              <strong style="color:var(--green)">Imagen usada:</strong>
+              <div style="margin-top:8px;font-size:0.85rem;color:rgba(255,255,255,0.8)">assets/senseytao2.jpg</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <footer>© tahamuzza · Dashboard simple · Hecho con atención</footer>
     </div>
+  </div>
 
-    <script>
-        const DATA_FILE = 'data/clase_150_a_192.csv';
+  <script>
+    // RUTAS
+    const CSV_PATH = 'data/clase_150_a_192.csv';
 
-        // Función para cargar y procesar los datos
-        function loadData() {
-            d3.csv(DATA_FILE).then(data => {
-                console.log('Datos cargados:', data);
-                
-                // 1. Procesar datos para gráficos
-                const platformCounts = data.reduce((acc, d) => {
-                    acc[d.platform] = (acc[d.platform] || 0) + 1;
-                    return acc;
-                }, {});
+    // Datos de ejemplo (fallback si no existe CSV)
+    const SAMPLE_DATA = [
+      { class_number: "192", title: "Técnica: Movimiento básico", platform: "YouTube", url: "#" },
+      { class_number: "191", title: "Formas y respiración", platform: "Vimeo", url: "#" },
+      { class_number: "190", title: "Kata avanzada", platform: "Drive", url: "#" },
+      { class_number: "189", title: "Principios de tahamuzza", platform: "YouTube", url: "#" },
+      { class_number: "188", title: "Entrenamiento de fuerza", platform: "YouTube", url: "#" }
+    ];
 
-                const classCounts = data.reduce((acc, d) => {
-                    acc[d.class_number] = (acc[d.class_number] || 0) + 1;
-                    return acc;
-                }, {});
+    // Intentamos cargar CSV; si falla, usamos SAMPLE_DATA
+    function tryLoadCSV() {
+      if (typeof d3 === 'undefined' || !d3.csv) {
+        // d3 no cargó: usar sample
+        return Promise.resolve(SAMPLE_DATA);
+      }
+      return d3.csv(CSV_PATH).then(data => {
+        if (!data || data.length === 0) return SAMPLE_DATA;
+        return data;
+      }).catch(() => SAMPLE_DATA);
+    }
 
-                // 2. Renderizar gráficos
-                renderPlatformChart(platformCounts);
-                renderClassCountChart(classCounts);
+    function generateColors(count) {
+      const palette = [
+        'rgba(76,175,80,0.85)', 'rgba(33,150,243,0.85)', 'rgba(255,152,0,0.85)',
+        'rgba(244,67,54,0.85)', 'rgba(156,39,176,0.85)', 'rgba(0,188,212,0.85)',
+        'rgba(255,235,59,0.85)'
+      ];
+      return Array.from({length: count}, (_,i)=>palette[i % palette.length]);
+    }
 
-                // 3. Renderizar lista de contenido
-                renderContentList(data);
+    function buildCharts(data) {
+      // platform counts
+      const platformCounts = data.reduce((acc,d)=>{ 
+        const key = (d.platform || 'Desconocido').trim() || 'Desconocido';
+        acc[key] = (acc[key]||0) + 1; return acc; 
+      }, {});
+      const platforms = Object.keys(platformCounts);
+      const pValues = Object.values(platformCounts);
+      const pColors = generateColors(platforms.length);
 
-            }).catch(error => {
-                console.error('Error al cargar los datos:', error);
-                document.getElementById('contentList').innerHTML = '<li>Error al cargar los datos. Asegúrate de que el archivo CSV está en la ruta correcta.</li>';
-            });
+      const ctxP = document.getElementById('platformChart').getContext('2d');
+      new Chart(ctxP, {
+        type: 'doughnut',
+        data: { labels: platforms, datasets: [{ data: pValues, backgroundColor: pColors, borderWidth:0 }] },
+        options: { plugins:{ legend:{labels:{color:'#fff'}}, tooltip:{bodyColor:'#000'} } }
+      });
+
+      // class counts
+      const classCounts = data.reduce((acc,d)=>{ 
+        const num = d.class_number ? String(d.class_number).trim() : '0';
+        acc[num] = (acc[num]||0) + 1; return acc; 
+      }, {});
+      const sorted = Object.keys(classCounts).sort((a,b)=>parseInt(b||0)-parseInt(a||0));
+      const cLabels = sorted.map(s=>`Clase ${s}`);
+      const cValues = sorted.map(s=>classCounts[s]);
+      const ctxC = document.getElementById('classCountChart').getContext('2d');
+      new Chart(ctxC, {
+        type: 'bar',
+        data: { labels: cLabels, datasets: [{ label:'Contenidos', data:cValues, backgroundColor: generateColors(1)[0] }] },
+        options: {
+          scales:{ y:{ beginAtZero:true, ticks:{color:'#fff'}, grid:{color:'rgba(255,255,255,0.06)'} },
+                   x:{ ticks:{color:'#fff'}, grid:{color:'rgba(255,255,255,0.02)'} } },
+          plugins:{ legend:{display:false} }
         }
+      });
+    }
 
-        // Función para generar colores dinámicos
-        function generateColors(count) {
-            const colors = [
-                'rgba(76, 175, 80, 0.7)',  // Verde
-                'rgba(33, 150, 243, 0.7)', // Azul
-                'rgba(255, 152, 0, 0.7)',  // Naranja
-                'rgba(244, 67, 54, 0.7)',  // Rojo
-                'rgba(156, 39, 176, 0.7)', // Púrpura
-                'rgba(0, 188, 212, 0.7)',  // Cyan
-                'rgba(255, 235, 59, 0.7)'  // Amarillo
-            ];
-            const borderColors = colors.map(c => c.replace('0.7', '1'));
-            
-            let background = [];
-            let border = [];
-            for (let i = 0; i < count; i++) {
-                background.push(colors[i % colors.length]);
-                border.push(borderColors[i % borderColors.length]);
-            }
-            return { background, border };
-        }
+    function renderList(data) {
+      const list = document.getElementById('contentList');
+      const filtered = data.filter(d => {
+        const n = parseInt(d.class_number||0);
+        return n >= 190 && n <= 192;
+      });
+      const toShow = filtered.length ? filtered : data.slice(0,5);
+      list.innerHTML = '';
+      toShow.sort((a,b)=>parseInt(b.class_number||0)-parseInt(a.class_number||0));
+      toShow.forEach(item=>{
+        const li = document.createElement('li');
+        const title = item.title && item.title.trim() ? item.title : 'Contenido sin título';
+        const url = item.url && item.url.trim() ? item.url : '#';
+        const plat = item.platform ? item.platform : 'Desconocido';
+        li.innerHTML = `<div><strong>Clase ${item.class_number}</strong><div style="font-size:0.9rem;color:rgba(255,255,255,0.9)">${title}</div></div><div style="text-align:right"><a class="link" href="${url}" target="_blank">Ver</a><div style="margin-top:6px;font-size:0.8rem;color:rgba(255,255,255,0.65)">${plat}</div></div>`;
+        list.appendChild(li);
+      });
+    }
 
-        // Gráfico de Distribución por Plataforma
-        function renderPlatformChart(counts) {
-            const labels = Object.keys(counts);
-            const dataValues = Object.values(counts);
-            const { background, border } = generateColors(labels.length);
-
-            new Chart(document.getElementById('platformChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: dataValues,
-                        backgroundColor: background,
-                        borderColor: border,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#fff'
-                            }
-                        },
-                        title: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
-
-        // Gráfico de Contenido por Número de Clase
-        function renderClassCountChart(counts) {
-            // Ordenar las clases de forma descendente (192, 191, ...)
-            const sortedClassNumbers = Object.keys(counts).sort((a, b) => b - a);
-            const labels = sortedClassNumbers.map(c => `Clase ${c}`);
-            const dataValues = sortedClassNumbers.map(c => counts[c]);
-            const { background, border } = generateColors(labels.length);
-
-            new Chart(document.getElementById('classCountChart'), {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Número de Contenidos',
-                        data: dataValues,
-                        backgroundColor: background[0], // Usar un solo color para barras
-                        borderColor: border[0],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { color: '#fff' },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
-                        },
-                        x: {
-                            ticks: { color: '#fff' },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        title: { display: false }
-                    }
-                }
-            });
-        }
-
-        // Lista de Contenido
-        function renderContentList(data) {
-            const listElement = document.getElementById('contentList');
-            // Filtrar y mostrar solo las últimas 3 clases para no saturar la lista
-            const latestClasses = data.filter(d => parseInt(d.class_number) >= 190 && parseInt(d.class_number) <= 192);
-            // Ordenar por número de clase descendente y luego por título
-            latestClasses.sort((a, b) => b.class_number - a.class_number || a.title.localeCompare(b.title));
-
-            listElement.innerHTML = ''; // Limpiar lista
-            latestClasses.forEach(item => {
-                const listItem = document.createElement('li');
-                const title = item.title && item.title.trim() !== '' ? item.title : `Contenido sin título`;
-                const platform = item.platform ? `(${item.platform})` : '';
-                listItem.innerHTML = `<strong>Clase ${item.class_number}:</strong> <a href="${item.url}" target="_blank">${title}</a> ${platform}`;
-                listElement.appendChild(listItem);
-            });
-        }
-
-        // Iniciar la carga de datos al cargar la página
-        document.addEventListener('DOMContentLoaded', loadData);
-    </script>
+    // iniciar
+    document.addEventListener('DOMContentLoaded', ()=>{
+      tryLoadCSV().then(data=>{
+        buildCharts(data);
+        renderList(data);
+      }).catch(err=>{
+        console.error('Error general:', err);
+        buildCharts(SAMPLE_DATA);
+        renderList(SAMPLE_DATA);
+      });
+    });
+  </script>
 </body>
 </html>
