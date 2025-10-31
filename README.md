@@ -2,7 +2,7 @@
 
 Este repositorio contiene un dashboard interactivo para visualizar y acceder al contenido de las **Clases 150 a 192** de artes marciales Tahamuuzza.
 
-## 📊 Visualización de Datos
+## 📊 Visualización de Datos. Esto es solo una idea tonta nada mas , estoy aprendiendo y haciendo experimentos.
 
 El dashboard (`index.html`) utiliza el archivo de datos `data/clase_150_a_192.csv` para generar las siguientes visualizaciones:
 
