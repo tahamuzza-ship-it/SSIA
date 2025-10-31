@@ -1,318 +1,338 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Artes Marciales Tahamuuzza - Clases 150 a 192</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard Artes Marciales — Clases 150–192</title>
 
-    <!-- Librerías -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-    <link href="https://unpkg.com/tabulator-tables@5.4.1/dist/css/tabulator.min.css" rel="stylesheet" />
-    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.1/dist/js/tabulator.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Librerías -->
+  <link href="https://unpkg.com/tabulator-tables@5.4.1/dist/css/tabulator.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+  <script src="https://unpkg.com/tabulator-tables@5.4.1/dist/js/tabulator.min.js"></script>
 
-    <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #1a1a1a;
-            color: #E8E8E8;
-            line-height:1.6;
-        }
-        .tatami-pattern {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            opacity:0.03;
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, #E8E8E8 35px, #E8E8E8 70px);
-            pointer-events:none; z-index:0;
-        }
-        .container { position:relative; z-index:1; max-width:1400px; margin:0 auto; padding:40px 20px; }
+  <style>
+    :root{
+      --bg:#0f1720;
+      --card:#0f1725;
+      --muted:#cfcfcf;
+      --accent:#DC143C;
+      --accent-2:#FFD700;
+      --accent-3:#2D5016;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;
+      background: linear-gradient(180deg, #0b0f14 0%, #0f1720 100%);
+      color:var(--muted);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .wrap{max-width:1250px;margin:24px auto;padding:20px;}
+    .hero{
+      display:flex; gap:20px; align-items:center; background: linear-gradient(90deg, rgba(220,20,60,0.06), rgba(45,80,22,0.03));
+      border-left:6px solid var(--accent); border-right:6px solid var(--accent-3); padding:18px; border-radius:8px;
+    }
+    .hero-img{width:170px;height:110px;object-fit:cover;border-radius:6px;flex:0 0 170px;box-shadow:0 6px 20px rgba(0,0,0,0.6)}
+    .hero-info h1{margin:0;font-size:26px;color:var(--accent);font-weight:700}
+    .hero-info p{margin:6px 0 0;color:var(--accent-2);font-weight:600;font-size:13px}
+    .controls{margin-left:auto;display:flex;gap:8px;align-items:center}
 
-        .header {
-            text-align:center; padding:60px 40px; margin-bottom:50px;
-            background: linear-gradient(135deg, rgba(220,20,60,0.15) 0%, rgba(45,80,22,0.15) 100%);
-            border-left:8px solid #DC143C; border-right:8px solid #2D5016;
-            position:relative; overflow:hidden;
-        }
-        .header::before {
-            content:''; position:absolute; top:0; left:0; right:0; height:3px;
-            background: linear-gradient(90deg, #DC143C, #FFD700, #2D5016);
-        }
-        .header h1 {
-            font-family:'Playfair Display', serif; font-size:56px; font-weight:900; color:#DC143C;
-            margin-bottom:10px; letter-spacing:-2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-        .header p { font-size:20px; color:#FFD700; font-weight:600; letter-spacing:2px; text-transform:uppercase; }
-        .header .subtitle { font-size:14px; color:#81C784; margin-top:10px; letter-spacing:1px; }
+    .btn{background:var(--accent);color:#fff;border:none;padding:10px 12px;border-radius:6px;font-weight:700;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    .btn:hover{transform:translateY(-2px)}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:8px;border:1px solid rgba(255,215,0,0.06)}
+    .card h3{margin:0 0 10px;color:var(--accent);font-size:16px;font-weight:800}
 
-        .stats-section { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; margin-bottom:50px; }
-        .stat-box {
-            background:linear-gradient(135deg, rgba(45,80,22,0.2) 0%, rgba(220,20,60,0.1) 100%);
-            border:2px solid #FFD700; padding:25px; text-align:center; position:relative; overflow:hidden;
-        }
-        .stat-box::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background-color:#DC143C; }
-        .stat-number { font-family:'Playfair Display', serif; font-size:48px; font-weight:900; color:#FFD700; margin-bottom:10px; }
-        .stat-label { font-size:13px; color:#E8E8E8; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+    .stats{display:flex;gap:12px}
+    .stat{flex:1;padding:14px;border-radius:6px;background:linear-gradient(90deg, rgba(45,80,22,0.08), rgba(220,20,60,0.02));text-align:center}
+    .stat .n{font-family: 'Playfair Display', serif; font-size:22px; color:var(--accent-2); font-weight:800}
+    .stat .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:6px}
 
-        .charts-section { display:grid; grid-template-columns:repeat(auto-fit,minmax(350px,1fr)); gap:30px; margin-bottom:50px; }
-        .chart-card { background:linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%); border:1px solid rgba(255,215,0,0.3); padding:30px; border-radius:4px; position:relative; overflow:hidden; }
-        .chart-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#DC143C,#FFD700); }
-        .chart-card h3 { font-family:'Playfair Display', serif; font-size:24px; color:#DC143C; margin-bottom:20px; padding-bottom:15px; border-bottom:2px solid #2D5016; }
+    .charts {display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}
+    canvas{max-height:260px}
 
-        .table-section { margin-bottom:50px; }
-        .table-section h2 { font-family:'Playfair Display', serif; font-size:32px; color:#DC143C; margin-bottom:20px; padding-bottom:15px; border-bottom:3px solid #FFD700; }
+    .table-area{margin-top:18px}
+    .filter-row{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+    .filter-row select,.filter-row input{padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:var(--muted)}
+    #dataTable{min-height:220px}
 
-        .filter-controls { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin-bottom:25px; padding:20px; background:rgba(45,80,22,0.1); border-left:4px solid #2D5016; }
-        .filter-group { display:flex; flex-direction:column; gap:8px; }
-        .filter-group label { font-size:13px; color:#FFD700; font-weight:600; text-transform:uppercase; letter-spacing:1px; }
-        .filter-group input, .filter-group select { padding:10px 12px; background-color:rgba(255,255,255,0.08); border:1px solid #FFD700; color:#E8E8E8; font-size:14px; border-radius:3px; }
-        .filter-buttons { display:flex; gap:10px; align-items:flex-end; }
-        .btn { padding:10px 20px; background-color:#DC143C; color:#fff; border:none; border-radius:3px; font-weight:600; cursor:pointer; font-size:13px; text-transform:uppercase; letter-spacing:1px; }
-        .btn.secondary { background-color:#2D5016; }
-        .btn:hover { background-color:#FFD700; color:#1a1a1a; transform:translateY(-2px); box-shadow:0 4px 12px rgba(255,215,0,0.3); }
-
-        /* Tabulator tweaks */
-        .tabulator { background-color:transparent; border:none; }
-        .tabulator .tabulator-header { background-color: rgba(220,20,60,0.2); border-bottom:2px solid #FFD700; }
-        .tabulator .tabulator-row { background-color: rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.08); }
-        .tabulator .tabulator-row .tabulator-cell { color:#E8E8E8; padding:12px; font-size:14px; }
-
-        .footer { text-align:center; padding:40px; border-top:3px solid #FFD700; margin-top:50px; background:linear-gradient(135deg, rgba(220,20,60,0.1) 0%, rgba(45,80,22,0.1) 100%); color:#81C784; font-size:13px; }
-
-        @media (max-width:768px) {
-            .header h1 { font-size:36px; }
-            .charts-section { grid-template-columns:1fr; }
-            .filter-controls { grid-template-columns:1fr; }
-        }
-    </style>
+    /* Hover / contrast fixes */
+    .card:hover, .stat:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.5); }
+    .card:hover, .stat:hover, .tabulator .tabulator-row:hover { color: #0b0b0b !important; }
+    .tabulator .tabulator-row .tabulator-cell a{ color:#81C784 !important; font-weight:700 }
+    .tabulator .tabulator-row .tabulator-cell a:hover{ color:#0b0b0b !important; text-decoration:underline }
+    .footer{margin-top:26px;text-align:center;color:#9fd69f;font-size:13px}
+    @media (max-width:980px){
+      .grid{grid-template-columns:1fr}
+      .charts{grid-template-columns:1fr}
+      .hero{flex-direction:column;align-items:flex-start}
+      .hero-img{width:100%;height:160px}
+    }
+  </style>
 </head>
 <body>
-    <div class="tatami-pattern"></div>
+  <div class="wrap">
+    <div class="hero card">
+      <!-- hero.jpg: si no existe, reemplaza ruta o sube la imagen en assets/hero.jpg -->
+      <img class="hero-img" src="assets/hero.jpg" alt="Artes Marciales — Hero image" onerror="this.style.display='none'">
+      <div class="hero-info">
+        <h1>🥋 Artes Marciales — Clases 150 a 192</h1>
+        <p>Repositorio interactivo — organiza & explora enlaces por clase y plataforma</p>
+        <div style="margin-top:10px;font-size:13px;color:var(--muted)">Visual: imagen hero, descarga CSV y exporta la tabla filtrada</div>
+      </div>
 
-    <div class="container">
-        <div class="header">
-            <h1>🥋 Dashboard Artes Marciales Tahamuuzza 🥋</h1>
-            <p>Clases 150 a 192</p>
-            <div class="subtitle">Repositorio Interactivo de Contenido Educativo</div>
-        </div>
-
-        <div class="stats-section" id="statsContainer"></div>
-
-        <div class="charts-section">
-            <div class="chart-card">
-                <h3>📊 Distribución por Plataforma</h3>
-                <div class="chart-container"><canvas id="platformChart"></canvas></div>
-            </div>
-
-            <div class="chart-card">
-                <h3>📈 Contenido por Clase</h3>
-                <div class="chart-container"><canvas id="classCountChart"></canvas></div>
-            </div>
-
-            <div class="chart-card">
-                <h3>🎯 Clases Únicas por Plataforma</h3>
-                <div class="chart-container"><canvas id="platformClassesChart"></canvas></div>
-            </div>
-        </div>
-
-        <div class="table-section">
-            <h2>📋 Contenido Completo</h2>
-
-            <div class="filter-controls">
-                <div class="filter-group">
-                    <label for="classFilter">Filtrar por Clase:</label>
-                    <select id="classFilter"><option value="">Todas las clases</option></select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="platformFilter">Filtrar por Plataforma:</label>
-                    <select id="platformFilter"><option value="">Todas las plataformas</option></select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="searchInput">Buscar en títulos:</label>
-                    <input type="text" id="searchInput" placeholder="Escribe aquí..." />
-                </div>
-
-                <div class="filter-buttons">
-                    <button class="btn" onclick="applyFilters()">Filtrar</button>
-                    <button class="btn secondary" onclick="clearFilters()">Limpiar</button>
-                </div>
-            </div>
-
-            <div id="dataTable"></div>
-        </div>
-
-        <div class="footer">
-            <p><strong>Dashboard Artes Marciales Tahamuuzza</strong></p>
-            <p>Clases 150 a 192 | Análisis de Contenido Educativo</p>
-            <p>Creado con HTML5, CSS3, JavaScript, Chart.js, D3.js, Tabulator.js</p>
-        </div>
+      <div class="controls">
+        <button id="btnDownloadCSV" class="btn">Descargar CSV</button>
+        <button id="btnExportVisible" class="btn ghost" title="Exportar filas visibles">Exportar visibles</button>
+        <button id="btnOpenAll" class="btn ghost" title="Abrir enlaces de la tabla (filtrados)">Abrir enlaces</button>
+      </div>
     </div>
 
-    <script>
-        /* Datos embebidos (si prefieres usar CSV externo, reemplaza esta parte) */
-        const DATA_CSV = `class_number,title,url,platform,notes
-192,Liquido medular.,https://youtu.be/7MJuSx142TI?si=9ossuRHzQTNW3i3F,YouTube,
-192,Habilidades basicas.,https://www.facebook.com/share/r/1A6avgNUi3/,Facebook,
-191,New kick training.,https://www.facebook.com/share/r/1GU8EtuGWH/,Facebook,
-191,Baiji training.,https://www.facebook.com/share/r/16TvuqiPKf/,Facebook,
-191,Flexiones Rusas.,https://youtube.com/shorts/tVN4XNIyv3Q?si=fPCcJXgnagpP_fG3,YouTube Shorts,
-190,9 palacios.,https://youtube.com/watch?v=uBRweMGxUXU&feature=shared,YouTube
-`; /* -- truncado en esta copia por brevedad; en tu archivo pega todo el CSV que tengas */
+    <div class="grid">
+      <div class="card">
+        <h3>Resumen</h3>
+        <div class="stats" id="statsContainer">
+          <div class="stat"><div class="n" id="totalContent">0</div><div class="label">Total de contenidos</div></div>
+          <div class="stat"><div class="n" id="totalClasses">0</div><div class="label">Clases cubiertas</div></div>
+          <div class="stat"><div class="n" id="totalPlatforms">0</div><div class="label">Plataformas</div></div>
+        </div>
+      </div>
 
-        let allData = [];
-        let table = null;
+      <div class="card">
+        <h3>Distribución por Plataforma</h3>
+        <canvas id="platformChart"></canvas>
+      </div>
 
-        function parseCSV(csv) {
-            const lines = csv.trim().split('\n');
-            const headers = lines[0].split(',');
-            const data = [];
-            for (let i = 1; i < lines.length; i++) {
-                const currentLine = lines[i].split(',');
-                const obj = {};
-                for (let j = 0; j < headers.length; j++) {
-                    obj[headers[j].trim()] = currentLine[j] ? currentLine[j].trim() : '';
-                }
-                data.push(obj);
-            }
-            return data;
+      <div class="card">
+        <h3>Contenido por Clase (top)</h3>
+        <canvas id="classCountChart"></canvas>
+      </div>
+    </div>
+
+    <div class="charts">
+      <div class="card">
+        <h3>Clases únicas por Plataforma</h3>
+        <canvas id="platformClassesChart"></canvas>
+      </div>
+
+      <div class="card">
+        <h3>Controles</h3>
+        <div style="margin-top:6px">
+          <div class="filter-row">
+            <select id="classFilter"><option value="">Todas las clases</option></select>
+            <select id="platformFilter"><option value="">Todas las plataformas</option></select>
+            <input id="searchInput" placeholder="Buscar título..." />
+            <button class="btn ghost" onclick="applyFilters()">Filtrar</button>
+            <button class="btn ghost" onclick="clearFilters()">Limpiar</button>
+          </div>
+          <div style="font-size:13px;color:var(--muted)">Tip: usa filtros y luego "Exportar visibles" para sacar solo lo que necesitas.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-area card">
+      <h3>Contenido completo</h3>
+      <div id="dataTable"></div>
+    </div>
+
+    <div class="footer">Creado por Tahamuzza — Dashboard Artes Marciales • Usa la rama correcta para ver los cambios</div>
+  </div>
+
+  <script>
+    // Intentar cargar CSV externo en data/clase_150_a_192.csv; si no existe, usar fallback (muestra mínima)
+    async function loadRawCSV(){
+      try{
+        const resp = await fetch('data/clase_150_a_192.csv');
+        if(!resp.ok) throw new Error('No CSV externo');
+        return await resp.text();
+      }catch(e){
+        // fallback corto (prueba la UI); reemplaza por tu CSV real si quieres
+        return `class_number,title,url,platform,notes
+150,Basics.,https://youtu.be/ubODjgurvHM,YouTube,
+151,Level 1.,https://youtu.be/BgmUQbOx_bo,YouTube,
+188,Calentamiento sho kaimen.,https://youtu.be/lEZM8TsGgp4,YouTube,
+192,Liquido medular.,https://youtu.be/7MJuSx142TI,YouTube,`;
+      }
+    }
+
+    function parseCSV(csv){
+      const lines = csv.trim().split('\n');
+      const headers = lines[0].split(',').map(h=>h.trim());
+      const out = [];
+      for(let i=1;i<lines.length;i++){
+        const line = lines[i];
+        // split only into 5 columns (in case title has commas) — join remainder
+        const parts = line.split(',');
+        if(parts.length < headers.length){
+          // skip invalid
+          continue;
         }
+        const obj = {};
+        obj.class_number = parts[0] ? parts[0].trim() : '';
+        obj.title = parts[1] ? parts[1].trim() : '';
+        // rebuild url (in case commas in title produced extra parts)
+        obj.url = parts[2] ? parts[2].trim() : '';
+        obj.platform = parts[3] ? parts[3].trim() : '';
+        obj.notes = parts.slice(4).join(',') || '';
+        out.push(obj);
+      }
+      return out;
+    }
 
-        function loadData() {
-            allData = parseCSV(DATA_CSV);
-            // defensive cleanup: ensure platform and class_number exist
-            allData = allData.map(r => ({ class_number: r.class_number || '', title: r.title || '', url: r.url || '', platform: r.platform || 'Desconocida', notes: r.notes || '' }));
+    // Generic helper to download text as file
+    function downloadFile(filename, content){
+      const blob = new Blob([content], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; document.body.appendChild(a);
+      a.click(); a.remove(); URL.revokeObjectURL(url);
+    }
 
-            const platformCounts = {};
-            const classCounts = {};
-            const platformClasses = {};
+    // Render helpers
+    function generateColors(n){
+      const base = ['rgba(220,20,60,0.85)','rgba(45,80,22,0.85)','rgba(255,215,0,0.85)','rgba(33,150,243,0.85)','rgba(156,39,176,0.85)'];
+      const border = base.map(s=>s.replace('0.85','1'));
+      const bg = []; const bd = [];
+      for(let i=0;i<n;i++){ bg.push(base[i%base.length]); bd.push(border[i%border.length]); }
+      return {bg,bd};
+    }
 
-            allData.forEach(item => {
-                const platform = item.platform;
-                const classNum = item.class_number;
+    // Charts and table variables
+    let allData = [];
+    let table = null;
+    let platformChart, classCountChart, platformClassesChart;
 
-                platformCounts[platform] = (platformCounts[platform] || 0) + 1;
-                classCounts[classNum] = (classCounts[classNum] || 0) + 1;
+    async function init(){
+      const raw = await loadRawCSV();
+      allData = parseCSV(raw);
 
-                if (!platformClasses[platform]) platformClasses[platform] = new Set();
-                platformClasses[platform].add(classNum);
-            });
+      // stats
+      const platformCounts = {};
+      const classCounts = {};
+      const platformClasses = {};
 
-            renderStats(allData, platformCounts, classCounts);
-            renderPlatformChart(platformCounts);
-            renderClassCountChart(classCounts);
-            renderPlatformClassesChart(platformClasses);
-            initializeTable(allData);
-            populateFilters(allData);
-        }
+      allData.forEach(r=>{
+        const p = r.platform || 'Desconocida';
+        const c = r.class_number || '';
+        platformCounts[p] = (platformCounts[p]||0) + 1;
+        classCounts[c] = (classCounts[c]||0) + 1;
+        platformClasses[p] = platformClasses[p] || new Set();
+        if(c) platformClasses[p].add(c);
+      });
 
-        function renderStats(data, platformCounts, classCounts) {
-            const statsContainer = document.getElementById('statsContainer');
-            const totalContent = data.length;
-            const totalClasses = Object.keys(classCounts).filter(k=>k).length;
-            const totalPlatforms = Object.keys(platformCounts).filter(k=>k).length;
-            const mostCommonClass = Object.keys(classCounts).reduce((a,b)=> classCounts[a] > classCounts[b] ? a : b, Object.keys(classCounts)[0] || '');
-            const mostCommonPlatform = Object.keys(platformCounts).reduce((a,b)=> platformCounts[a] > platformCounts[b] ? a : b, Object.keys(platformCounts)[0] || '');
+      document.getElementById('totalContent').textContent = allData.length;
+      document.getElementById('totalClasses').textContent = Object.keys(classCounts).filter(k=>k).length;
+      document.getElementById('totalPlatforms').textContent = Object.keys(platformCounts).filter(k=>k).length;
 
-            statsContainer.innerHTML = `
-                <div class="stat-box"><div class="stat-number">${totalContent}</div><div class="stat-label">Total de Contenidos</div></div>
-                <div class="stat-box"><div class="stat-number">${totalClasses}</div><div class="stat-label">Clases Cubiertas</div></div>
-                <div class="stat-box"><div class="stat-number">${totalPlatforms}</div><div class="stat-label">Plataformas</div></div>
-                <div class="stat-box"><div class="stat-number">${mostCommonClass}</div><div class="stat-label">Clase Más Activa</div></div>
-                <div class="stat-box"><div class="stat-number">${mostCommonPlatform}</div><div class="stat-label">Plataforma Principal</div></div>
-            `;
-        }
+      renderPlatformChart(platformCounts);
+      renderClassCountChart(classCounts);
+      renderPlatformClassesChart(platformClasses);
+      initTable(allData);
+      fillFilters(allData);
+    }
 
-        function generateColors(count) {
-            const colors = ['rgba(220,20,60,0.7)','rgba(45,80,22,0.7)','rgba(255,215,0,0.7)','rgba(33,150,243,0.7)','rgba(244,67,54,0.7)','rgba(156,39,176,0.7)','rgba(0,188,212,0.7)'];
-            const borderColors = colors.map(c => c.replace('0.7','1'));
-            const background = [], border = [];
-            for (let i=0;i<count;i++){ background.push(colors[i % colors.length]); border.push(borderColors[i % borderColors.length]); }
-            return { background, border };
-        }
+    function renderPlatformChart(counts){
+      const ctx = document.getElementById('platformChart').getContext('2d');
+      const labels = Object.keys(counts).sort();
+      const data = labels.map(l=>counts[l]);
+      const cols = generateColors(labels.length);
+      if(platformChart) platformChart.destroy();
+      platformChart = new Chart(ctx,{type:'doughnut',data:{labels, datasets:[{data, backgroundColor:cols.bg, borderColor:cols.bd, borderWidth:1}]}, options:{plugins:{legend:{position:'bottom',labels:{color:'#fff'}}}}});
+    }
+    function renderClassCountChart(counts){
+      const ctx = document.getElementById('classCountChart').getContext('2d');
+      const entries = Object.entries(counts).filter(e=>e[0]).sort((a,b)=>b[1]-a[1]).slice(0,15);
+      const labels = entries.map(e=>`Clase ${e[0]}`), data = entries.map(e=>e[1]);
+      const cols = generateColors(labels.length);
+      if(classCountChart) classCountChart.destroy();
+      classCountChart = new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Contenidos',data, backgroundColor:cols.bg[0], borderColor:cols.bd[0], borderWidth:1}]}, options:{indexAxis:'y', plugins:{legend:{display:false}}}});
+    }
+    function renderPlatformClassesChart(platformClasses){
+      const labels = Object.keys(platformClasses).sort();
+      const data = labels.map(l=>platformClasses[l].size || 0);
+      const cols = generateColors(labels.length);
+      const ctx = document.getElementById('platformClassesChart').getContext('2d');
+      if(platformClassesChart) platformClassesChart.destroy();
+      platformClassesChart = new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Clases únicas',data, backgroundColor:cols.bg, borderColor:cols.bd, borderWidth:1}]}, options:{plugins:{legend:{display:false}}}});
+    }
 
-        function renderPlatformChart(counts) {
-            const labels = Object.keys(counts).sort();
-            const dataValues = labels.map(l => counts[l]);
-            const { background, border } = generateColors(labels.length);
-            new Chart(document.getElementById('platformChart'), {
-                type: 'doughnut',
-                data: { labels, datasets: [{ data: dataValues, backgroundColor: background, borderColor: border, borderWidth:2 }] },
-                options: { responsive:true, plugins:{ legend:{ labels:{ color:'#E8E8E8', font:{ size:12 } } } } }
-            });
-        }
+    function initTable(data){
+      const tabData = data.map(d=>({class:d.class_number, title:d.title||'Sin título', platform:d.platform||'Desconocida', url:d.url||'', notes:d.notes||''}));
+      table = new Tabulator("#dataTable",{
+        data: tabData,
+        layout:"fitColumns",
+        pagination:"local",
+        paginationSize:15,
+        movableColumns:true,
+        columns:[
+          {title:"Clase", field:"class", width:90, sorter:"number"},
+          {title:"Título", field:"title", minWidth:200},
+          {title:"Plataforma", field:"platform", width:130},
+          {title:"Enlace", field:"url", width:140, formatter:function(cell){
+            const v = cell.getValue();
+            if(!v) return '-';
+            const safe = encodeURI(v);
+            return `<a href="${safe}" target="_blank" rel="noopener noreferrer">Abrir</a> &nbsp; <a href="${safe}" target="_blank" rel="noopener noreferrer" download>↓</a>`;
+          }},
+          {title:"Notas", field:"notes", minWidth:160}
+        ],
+        initialSort:[{column:"class", dir:"desc"}],
+      });
+    }
 
-        function renderClassCountChart(counts) {
-            const entries = Object.entries(counts).map(([k,v])=>({k,v})).sort((a,b)=> b.v - a.v).slice(0,15);
-            const labels = entries.map(e=> `Clase ${e.k}`); const dataValues = entries.map(e=> e.v);
-            new Chart(document.getElementById('classCountChart'), {
-                type:'bar', data:{ labels, datasets:[{ label:'Contenidos', data:dataValues, backgroundColor: generateColors(labels.length).background[0], borderColor: generateColors(labels.length).border[0], borderWidth:1 }] },
-                options:{ indexAxis:'y', responsive:true, scales:{ x:{ beginAtZero:true, ticks:{ color:'#E8E8E8' }, grid:{ color:'rgba(255,255,255,0.1)'} }, y:{ ticks:{ color:'#E8E8E8' }, grid:{ color:'rgba(255,255,255,0.1)'} } }, plugins:{ legend:{ display:false } } }
-            });
-        }
+    function fillFilters(data){
+      const cf = document.getElementById('classFilter');
+      const pf = document.getElementById('platformFilter');
+      const classes = [...new Set(data.map(d=>d.class_number))].filter(x=>x).sort((a,b)=>b-a);
+      classes.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=`Clase ${c}`; cf.appendChild(o) });
+      const plats = [...new Set(data.map(d=>d.platform))].sort();
+      plats.forEach(p=>{ const o=document.createElement('option'); o.value=p; o.textContent=p; pf.appendChild(o) });
+    }
 
-        function renderPlatformClassesChart(platformClasses) {
-            const labels = Object.keys(platformClasses).sort();
-            const dataValues = labels.map(p => platformClasses[p].size || 0);
-            const { background, border } = generateColors(labels.length);
-            new Chart(document.getElementById('platformClassesChart'), {
-                type:'bar', data:{ labels, datasets:[{ label:'Clases Únicas', data:dataValues, backgroundColor: background, borderColor: border, borderWidth:1 }] },
-                options:{ responsive:true, scales:{ y:{ beginAtZero:true, ticks:{ color:'#E8E8E8' }, grid:{ color:'rgba(255,255,255,0.1)' } }, x:{ ticks:{ color:'#E8E8E8' }, grid:{ color:'rgba(255,255,255,0.1)' } } } }
-            });
-        }
+    function applyFilters(){
+      const cls = document.getElementById('classFilter').value;
+      const plat = document.getElementById('platformFilter').value;
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+      const filters = [];
+      if(cls) filters.push({field:"class", type:"=", value:cls});
+      if(plat) filters.push({field:"platform", type:"=", value:plat});
+      if(search) filters.push({field:"title", type:"like", value:search});
+      table.setFilter(filters);
+    }
+    function clearFilters(){ document.getElementById('classFilter').value=''; document.getElementById('platformFilter').value=''; document.getElementById('searchInput').value=''; if(table) table.clearFilter() }
 
-        function initializeTable(data) {
-            const tableData = data.map(item => ({ class: item.class_number, title: item.title || 'Sin título', platform: item.platform, url: item.url, notes: item.notes || '-' }));
-            table = new Tabulator("#dataTable", {
-                data: tableData,
-                layout: "fitColumns",
-                pagination: "local",
-                paginationSize: 15,
-                paginationSizeSelector: [10,15,20,50],
-                columns: [
-                    { title: "Clase", field: "class", width:80, sorter:"number" },
-                    { title: "Título", field: "title", minWidth:250 },
-                    { title: "Plataforma", field: "platform", width:130, sorter:"string" },
-                    { title: "Enlace", field: "url", width:120, formatter: function(cell){
-                        const value = cell.getValue();
-                        return value ? `<a href="${encodeURI(value)}" target="_blank" rel="noopener noreferrer">Ver</a>` : '-';
-                    }},
-                    { title: "Notas", field: "notes", minWidth:150 }
-                ],
-                initialSort: [{ column: "class", dir: "desc" }]
-            });
-        }
+    // botones utilitarios
+    document.addEventListener('click', (e)=>{
+      if(e.target && e.target.id === 'btnDownloadCSV'){
+        // intentar descargar CSV remoto si existe; si no, generar del array actual
+        (async ()=>{
+          try{
+            const resp = await fetch('data/clase_150_a_192.csv');
+            if(resp.ok){ const txt = await resp.text(); downloadFile('clase_150_a_192.csv', txt); return; }
+          }catch(err){}
+          // fallback: export current table data
+          const rows = table.getData();
+          const csv = ['class_number,title,url,platform,notes', ...rows.map(r=>[r.class, `"${(r.title||'').replace(/"/g,'""')}"`, r.url, r.platform, `"${(r.notes||'').replace(/"/g,'""')}"`].join(','))].join('\n');
+          downloadFile('clase_150_a_192_export.csv', csv);
+        })();
+      }
 
-        function populateFilters(data) {
-            const classFilter = document.getElementById('classFilter');
-            const classes = [...new Set(data.map(d=>d.class_number))].filter(x=>x).sort((a,b)=> b - a);
-            classes.forEach(cls => { const op = document.createElement('option'); op.value = cls; op.textContent = `Clase ${cls}`; classFilter.appendChild(op); });
+      if(e.target && e.target.id === 'btnExportVisible'){
+        const rows = table.getData(true); // get visible rows
+        const csv = ['class_number,title,url,platform,notes', ...rows.map(r=>[r.class, `"${(r.title||'').replace(/"/g,'""')}"`, r.url, r.platform, `"${(r.notes||'').replace(/"/g,'""')}"`].join(','))].join('\n');
+        downloadFile('clase_150_a_192_visible.csv', csv);
+      }
 
-            const platformFilter = document.getElementById('platformFilter');
-            const plats = [...new Set(data.map(d=>d.platform))].sort();
-            plats.forEach(p => { const op = document.createElement('option'); op.value = p; op.textContent = p; platformFilter.appendChild(op); });
-        }
+      if(e.target && e.target.id === 'btnOpenAll'){
+        // abre cada enlace visible en pestañas nuevas (limit 10 para no spamear)
+        const rows = table.getData(true).filter(r=>r.url).slice(0,12);
+        rows.forEach(r=>{ window.open(r.url, '_blank', 'noopener') });
+      }
+    });
 
-        function applyFilters() {
-            const classValue = document.getElementById('classFilter').value;
-            const platformValue = document.getElementById('platformFilter').value;
-            const searchValue = document.getElementById('searchInput').value.toLowerCase();
-            const filters = [];
-            if (classValue) filters.push({ field:"class", type:"=", value: classValue });
-            if (platformValue) filters.push({ field:"platform", type:"=", value: platformValue });
-            if (searchValue) filters.push({ field:"title", type:"like", value: searchValue });
-            table.setFilter(filters);
-        }
-
-        function clearFilters() {
-            document.getElementById('classFilter').value = '';
-            document.getElementById('platformFilter').value = '';
-            document.getElementById('searchInput').value = '';
-            if (table) table.clearFilter();
-        }
-
-        document.addEventListener('DOMContentLoaded', loadData);
-    </script>
+    // iniciar
+    init();
+  </script>
 </body>
 </html>
